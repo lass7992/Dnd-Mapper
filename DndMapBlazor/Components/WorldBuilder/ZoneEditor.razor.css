@@ -1,0 +1,149 @@
+﻿.mapEntity {
+}
+
+    .mapEntity :hover {
+        filter: drop-shadow(0px 0px 5px rgb(0, 0, 0, 100%)) drop-shadow(0px 0px 5px rgb(0, 0, 0, 100%)) blur(1px);
+    }
+
+
+.row {
+    padding: 0px 20px;
+}
+
+.row p {
+    margin: 0px;
+    width: fit-content;
+}
+
+.tile {
+    aspect-ratio: 1 / 1;
+    border: 1px solid rgba(0,0,0,0.5);
+    padding: 0px 0px 1px 1px;
+    position: absolute;
+}
+
+    .tile:hover {
+        background-color: rgba(255,255,255,0.3);
+        box-shadow: 5px 5px 1px rgba(0,0,0,0.4)
+    }
+
+.ZoneMenuItemZone {
+    background-color: rgba(55, 55, 255, 0.4);
+}
+
+.ZoneMenuItemField {
+    background-color: rgba(55, 255, 55, 0.4);
+}
+
+.backButton {
+    clip-path: polygon(0 50%, 25% 0%, 100% 0%, 100% 100%, 25% 100%);
+    width: 35px;
+    height: 25px;
+    margin: 5px 0px;
+    position: absolute;
+    top: 0px;
+    left: 5px;
+}
+
+
+.ZoneMenuItem {
+    aspect-ratio: 1/1;
+    border-radius: 6%;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.4);
+    margin: 5px;
+    border: 1px solid black
+}
+
+    .ZoneMenuItem:hover {
+        box-shadow: 0px 0px 4px rgba(0,0,0,0.7);
+        background-color: aliceblue;
+    }
+
+circle:hover {
+    color: red;
+    box-shadow: 1px 1px 3px red;
+}
+
+
+.multibuttons {
+    padding: 0;
+    width: 100%;
+    margin: auto;
+}
+
+    .multibuttons .col {
+        padding: 0;
+        margin: 0;
+    }
+
+    .multibuttons button {
+        border-width: 2px;
+        max-width: 300px;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+@media (min-width: 630px) {
+    .multibuttons {
+        max-width: 300px;
+    }
+
+        .multibuttons .col {
+            display: flex;
+            margin: 0 !important
+        }
+
+        .multibuttons > .col:first-child {
+            justify-content: end
+        }
+
+        .multibuttons > .col:last-child {
+            justify-content: start
+        }
+
+        .multibuttons button {
+            width: 100% !important;
+        }
+
+        .multibuttons > .col:first-child button {
+            border-radius: 4px 0px 0px 4px;
+            border-right-width: 1px;
+        }
+
+        .multibuttons > .col:last-child button {
+            border-radius: 0px 4px 4px 0px;
+            border-left-width: 2px;
+        }
+}
+
+
+
+.MenuItemNameText {
+    position: absolute;
+    bottom: 0px;
+    width: 90%;
+    margin: 2px;
+    border-radius:5px;
+}
+
+    .MenuItemNameText input {
+        width: 100%;
+        border: none;
+        background: none;
+        filter: drop-shadow(0px 0px 1px gray);
+        text-align:center;
+    }
+
+        .MenuItemNameText input:hover {
+            border: 1px solid black !important;
+            border-radius: 5px !important;
+            background-color: rgba(255,255,255,0.2);
+            backdrop-filter: opacity(0.2);
+            box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+        }
+    .MenuItemNameText input:focus {
+        border: 1px solid black !important;
+        background-color: white;
+    }
+
+

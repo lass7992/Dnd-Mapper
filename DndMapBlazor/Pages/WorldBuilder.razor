@@ -1,0 +1,155 @@
+﻿@page "/WorldBuilder"
+@using System.Globalization
+@using DndMapBlazor.Components.WorldBuilder
+@using DndMapBlazor.Helper
+@using DndMapBlazor.Models
+@using DndMapBlazor.Models.Enums
+@using DndMapBlazor.Models.WorldBuilderModels
+@inject HttpClient Http
+
+<PageTitle>World Builder</PageTitle>
+<div style="width:80%; margin:auto">
+    <h1 style="text-align:center; margin:auto">World Builder</h1>
+
+    @* Menu selector *@
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark" style="padding-left:10px; border-radius: 10px 10px 0px 0px">
+        <a class="navbar-brand" @onclick="x => {selectedField = null; selectedWorld = topWorld; currentMenuItem = WorldBuilderMenuItems.None;}">Top</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item @(currentMenuItem == WorldBuilderMenuItems.None ? "active" : "")">
+                    <a class="nav-link" @onclick="x => currentMenuItem = WorldBuilderMenuItems.None">World</a>
+                </li>
+                @if (selectedField != null)
+                {
+                    <li class="nav-item @(currentMenuItem == WorldBuilderMenuItems.EditField ? "active" : "")">
+                        <a class="nav-link" @onclick="x => currentMenuItem = WorldBuilderMenuItems.EditField">Field</a>
+                    </li>
+                }
+            </ul>
+
+        </div>
+    </nav>
+
+    <div style="position:relative; width:100%; display:@(RunChangeZone && changeMap.ToImage != null ? "none" : "block")">
+        @if(currentMenuItem == WorldBuilderMenuItems.None)
+        {
+            <ZoneEditor IsTopLevel="selectedWorld == topWorld" ThisZone="selectedWorld" ChangeMapEntity="ChangeSelected" ChangeMap="changeMap"></ZoneEditor>
+        }
+        else if(currentMenuItem == WorldBuilderMenuItems.EditField)
+        {
+            <FieldEditor field="selectedField"></FieldEditor>
+        }
+    </div>
+
+    @if (RunChangeZone && (changeMap.ToImage != null || changeMap.FromImage != null))
+    {
+        <div style="position:relative;width:100%; overflow:hidden; height:@(changeMap.height)px">
+            @if (@changeMap.ToImage != null)
+            {
+                <img class="w-100" src="data:image;base64, @changeMap.ToImage" style="position:absolute;top:0;left:0;" />
+            }
+            @if (@changeMap.FromImage != null)
+            {
+                <img class="w-100" src="data:image;base64, @changeMap.FromImage" style="transform-origin: @(changeMap.xPos + "px " + changeMap.yPos+ "px"); position:absolute;top:0;left:0;transition:normal linear @(mapChangeAnimationTime)s; transform:scale(@(RunChangeZoneAnimation ? ((changeMap.ZoomIn ?? true) ? "10" : "1") : (!(changeMap.ZoomIn ?? true) ? "10" : "1")));  opacity:@(RunChangeZoneAnimation ? "0" : "100")" />
+                @* <img class="w-100" src="data:image;base64, @changeMap.FromImage" style="animation-iteration-count: infinite; animation-play-state:running; animation-direction:normal; @((changeMap.ZoomIn ?? true) ? "animation: zoomIn 2s;" : "animation: fadeOut 2s;" )" /> *@
+            }
+            @* <img class="w-100" src="data:image;base64, @changeMap.ToImage" style="@((changeMap.ZoomIn ?? true) ? "" : "animation: zoomOut 2s;" )" /> *@
+        </div>
+    }
+
+</div>
+
+
+@code{
+    public Zone topWorld { get; set; } = new Zone();
+    public Zone? selectedWorld { get; set; }
+    public Field? selectedField { get; set; }
+
+    public ChangeMap changeMap { get; set; } = new ChangeMap();
+    public bool RunChangeZone { get; set; } = false;
+    public bool RunChangeZoneAnimation { get; set; } = false;
+
+    public int mapChangeAnimationTime { get; set; } = 2;
+
+    protected override void OnInitialized()
+    {
+        selectedWorld = topWorld;
+        StartAnimationTimer = new System.Timers.Timer(100);
+        StartAnimationTimer.Elapsed += (x, y) =>
+        {
+            RunChangeZoneAnimation = true;
+            this.StateHasChanged();
+        };
+        StartAnimationTimer.AutoReset = false;
+        EndAnimationTimer = new System.Timers.Timer(mapChangeAnimationTime * 1000);
+        EndAnimationTimer.AutoReset = false;
+        EndAnimationTimer.Elapsed += (x, y) => 
+        { 
+            RunChangeZoneAnimation = false; 
+            RunChangeZone = false;
+            this.StateHasChanged();
+        };
+    }
+
+    private WorldBuilderMenuItems currentMenuItem = WorldBuilderMenuItems.None;
+
+
+    bool loading = false;
+
+    private async void LoadFiles(InputFileChangeEventArgs e)
+    {
+        loading = true;
+        await using MemoryStream fs = new MemoryStream();
+        await e.File.OpenReadStream().CopyToAsync(fs);
+        byte[] somBytes = ImageFileHelper.GetBytes(fs);
+        topWorld.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
+        loading = false;
+        this.StateHasChanged();
+    }
+
+    System.Timers.Timer StartAnimationTimer = new System.Timers.Timer();
+    System.Timers.Timer EndAnimationTimer = new System.Timers.Timer();
+
+
+    private void ChangeSelected(WorldMapEntity entity)
+    {   
+        if (entity is Zone)
+        {
+            changeMap.FromImage = selectedWorld.mapImage;
+            changeMap.ToImage = entity.mapImage;
+
+            if (entity == topWorld || entity == selectedWorld.ParentZone)
+            {
+                changeMap.ZoomIn = false;
+                changeMap.xPos = ((int)(selectedWorld.x + (selectedWorld.width/2))); //TODO get image width
+                changeMap.yPos = ((int)(selectedWorld.y + (selectedWorld.height / 2))); //TODO get image width
+            }
+            else
+            {
+                changeMap.ZoomIn = true;
+                changeMap.xPos = (int)(entity.x + (entity.width / 2));
+                changeMap.yPos = (int)(entity.y + (entity.height / 2));
+            }
+
+            changeMap.height = 800;
+
+            RunChangeZone = true;
+            RunChangeZoneAnimation = false;
+            StartAnimationTimer.Start();
+            EndAnimationTimer.Start();
+
+            selectedWorld = entity as Zone;
+            selectedField = null;
+        }
+        else if (entity is Field)
+        {
+            selectedField = entity as Field;
+            currentMenuItem = WorldBuilderMenuItems.EditField;
+        }  
+    }
+}

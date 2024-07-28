@@ -1,0 +1,48 @@
+﻿.row {
+    padding: 0px 20px;
+}
+
+.InputNumber {
+    width: fit-content;
+    margin-bottom: 20px;
+}
+
+    .InputNumber input {
+        width: 100%;
+    }
+
+
+.row p {
+    margin: 0px;
+    width: fit-content;
+}
+
+.tile {
+    aspect-ratio: 1 / 1;
+    border: 1px solid rgba(0,0,0,0.5);
+    padding: 0px 0px 1px 1px;
+    position: absolute;
+}
+
+    .tile:hover {
+        background-color: rgba(255,255,255,0.3);
+        box-shadow: 5px 5px 1px rgba(0,0,0,0.4)
+    }
+
+.wallMenuItem {
+    aspect-ratio: 1/1;
+    border-radius: 6%;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.4);
+    margin: 5px;
+    border: 1px solid black
+}
+
+    .wallMenuItem:hover {
+        box-shadow: 0px 0px 4px rgba(0,0,0,0.7);
+        background-color: aliceblue;
+    }
+
+circle:hover {
+    color: red;
+    box-shadow: 1px 1px 3px red;
+}

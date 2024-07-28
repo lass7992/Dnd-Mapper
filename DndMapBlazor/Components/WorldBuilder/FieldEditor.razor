@@ -1,0 +1,279 @@
+﻿@using System.Globalization
+@using DndMapBlazor.Helper
+@using DndMapBlazor.Models
+@if (loading)
+{
+    <h2>Loading</h2>
+}
+else
+{
+
+    @if (field.mapImage == null)
+    {
+        <div class="w-100;" style="text-align:center;">
+            <InputFile OnChange="LoadFiles" />
+        </div>
+    }
+    else
+    {
+        <div class="row" style="padding:0px;margin:0px; width:100%">
+            <div class="col-4" style="border:2px solid black; padding:5px;">
+                <div class="row text-center fw-bolder text-decoration-underline" style="padding-top:10px">
+                    <h2>Creator menu</h2>
+                </div>
+
+                <div class="row text-center">
+                    <p>Grid length horisontal</p>
+                    <div class="InputNumber" style="margin:auto">
+                        <input step="any" type="number" @bind-value="gridX">
+                    </div>
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <p>Horisontal start</p>
+                        <div class="InputNumber">
+                            <input step="any" type="number" @bind-value="offsetXStart">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <p>Horisontal end</p>
+                        <div class="InputNumber">
+                            <input step="any" type="number" @bind-value="offsetXEnd">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <p>Vertikal start</p>
+                        <div class="InputNumber">
+                            <input step="any" type="number" @bind-value="offsetYStart">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <p>Vertikal end</p>
+                        <div class="InputNumber">
+                            <input step="any" type="number" @bind-value="offsetYEnd">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:40px">
+                    <b>Walls</b>
+                    <button class="btn btn-outline-success fw-bold" style="border-width:2px; max-width:300px; margin:auto; margin-bottom:20px" @onclick="AddWall"> Add Wall </button>
+
+                    @if (currentWall != null)
+                    {
+                        <button class="btn btn-outline-danger fw-bold" style="border-width:2px; max-width:300px; margin:auto; margin-bottom:20px" @onclick="StopWall"> Finish wall </button>
+                        <button class="btn btn-outline-warning fw-bold" style="border-width:2px; max-width:300px; margin:auto; margin-bottom:20px" @onclick="x => {currentWall.RemoveWallpoint(-1);}" disabled="@(currentWall.WallPoints.Count == 0)"> Remove last point </button>
+                    }
+
+
+
+                    <div class="row" style="margin:auto;width:100%">
+                        @foreach (var wall in walls)
+                        {
+                            <div class="col-sm-12 col-md-6 col-lg-3 p-0">
+                                <div @onclick="x => currentWall = wall" class="wallMenuItem" style="@(wall == currentWall ? "background-color:rgba(55, 255, 255, 0.2);box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.8);" : "");">
+                                    @if (wall.WallPoints.Count > 0)
+                                    {
+                                        <svg width="100%" height="100%" viewBox="0 0 100 100">
+                                            <polyline width="100%" height="100%" points="@wall.WallPoints.Select(p => ((p.x/imageWidth)*100).ToString(info) + "," + ((p.y/imageHeight)*100).ToString(info)+"").Aggregate((x,y) => x + " " + y)" stroke="black" stroke-width="1" fill="none" />
+                                        </svg>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <div class="col-8" style="padding:0px;">
+                <div class="w-100;" style="text-align:center;">
+                    @* Draw walls*@
+                    <div style="width:0px; height:0px;position:relative">
+                        <svg width="@imageWidth" height="@imageHeight">
+                            @foreach (var wall in walls)
+                            {
+                                @if (wall.WallPoints.Count > 0)
+                                {
+                                    <polyline points="@wall.WallPoints.Select(p => p.x + "," + p.y).Aggregate((x,y) => x + " " + y)" stroke="@(currentWall == wall ? "white" : "black")" stroke-width="@wall.width" fill="none" />
+
+                                    @if (currentWall != null)
+                                    {
+                                        @for (int i = 0; i < wall.WallPoints.Count; i++)
+                                        {
+                                            <circle stroke="@(i == wall.WallPoints.Count-1 && wall == currentWall ? "yellow" : "gray")" stroke-width="2" r="5" cx="@wall.WallPoints[i].x" cy="@wall.WallPoints[i].y"></circle>
+                                        }
+                                    }
+                                }
+                            }
+                        </svg>
+                    </div>
+
+
+                    @* Draw Grid *@
+                    <div style="width:0px; height:0px;position:relative">
+                        @for (int x = 0; x < gridX; x++)
+                        {
+                            @for (int y = 0; y < field.gridY; y++)
+                            {
+                                <div class="tile" style="width:@((gridSizeLength).ToString(info))px; left:@((field.offsetXStart + gridSizeLength*x).ToString(info))px; top:@((field.offsetYStart + gridSizeLength*y).ToString(info))px; @(x > 0 ? "border-left: 0px !important;" : "" ) @(y > 0 ? "border-top: 0px !important;" : "" )"></div>
+                            }
+                        }
+                    </div>
+
+                    @if (currentWall != null)
+                    {
+                        <div style="width:0px;height:0px; position:relative">
+                            <div @onclick="AddWallPointHandler" style="width:@(imageWidth)px;height:@(imageHeight)px;background-color:rgba(255,255,255,0.1)">
+                            </div>
+                        </div>
+                    }
+
+
+                    <img class="w-100" src="data:image;base64, @field.mapImage" />
+                </div>
+            </div>
+        </div>
+
+    }
+}
+@code {
+    protected override void OnInitialized()
+    {
+        UpdateGrid();
+    }
+
+    [Parameter]
+    public Field field { get; set; } 
+
+    bool loading = false;
+
+    CultureInfo info = CultureInfo.CreateSpecificCulture("en-GB");
+
+    double imageWidth = 1222;
+    double mapWidth = 0;
+    double imageHeight = 1222;
+    double mapHeight = 0;
+
+    public double gridSizeLength = 4;
+
+
+
+    private List<Wall> walls = new List<Wall>();
+
+    int gridX
+    {
+        get
+        {
+            return field.gridX;
+        }
+        set
+        {
+            field.gridX = value;
+            UpdateGrid();
+        }
+    }
+
+    int offsetXStart
+    {
+        get
+        {
+            return field.offsetXStart;
+        }
+        set
+        {
+            field.offsetXStart = value;
+            UpdateGrid();
+        }
+    }
+
+    int offsetXEnd
+    {
+        get
+        {
+            return field.offsetXEnd;
+        }
+        set
+        {
+            field.offsetXEnd = value;
+            UpdateGrid();
+        }
+    }
+
+    int offsetYStart
+    {
+        get
+        {
+            return field.offsetYStart;
+        }
+        set
+        {
+            field.offsetYStart = value;
+            UpdateGrid();
+        }
+    }
+
+    int offsetYEnd
+    {
+        get
+        {
+            return field.offsetYEnd;
+        }
+        set
+        {
+            field.offsetYEnd = value;
+            UpdateGrid();
+        }
+    }
+
+
+
+
+    private void UpdateGrid()
+    {
+        mapWidth = imageWidth - field.offsetXStart - field.offsetXEnd;
+        mapHeight = imageHeight - field.offsetYStart - field.offsetYEnd;
+
+        gridSizeLength = mapWidth / gridX;
+
+        field.gridY = (int)(mapHeight / gridSizeLength);
+    }
+
+    private async void LoadFiles(InputFileChangeEventArgs e)
+    {
+        loading = true;
+        await using MemoryStream fs = new MemoryStream();
+        await e.File.OpenReadStream().CopyToAsync(fs);
+        byte[] somBytes = ImageFileHelper.GetBytes(fs);
+        field.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
+        loading = false;
+        this.StateHasChanged();
+    }
+
+
+    public Wall? currentWall;
+    public void AddWall()
+    {
+        var newWall = new Wall();
+        currentWall = newWall;
+        walls.Add(newWall);
+        this.StateHasChanged();
+    }
+
+    public void StopWall()
+    {
+        currentWall = null;
+    }
+
+
+
+    public void AddWallPointHandler(MouseEventArgs x)
+    {
+        if (currentWall != null && x.Button == 0)
+            currentWall.AddWallpoint(x.OffsetX, x.OffsetY);
+    }
+}
