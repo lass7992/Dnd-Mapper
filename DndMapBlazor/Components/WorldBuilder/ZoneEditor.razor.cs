@@ -29,7 +29,6 @@ public partial class ZoneEditor : IDisposable
 
 
     bool loading = false;
-    CultureInfo info = CultureInfo.CreateSpecificCulture("en-GB");
 
     private WorldMapEntity? SelectedMapEntity;
     public Timer UpdateMapTimer { get; set; }
@@ -37,8 +36,12 @@ public partial class ZoneEditor : IDisposable
     double imageWidth = 0;
     double imageHeight = 0;
 
+    NumberFormatInfo nfi = new NumberFormatInfo();
+
     protected override void OnInitialized()
     {
+        nfi.NumberDecimalSeparator = ".";
+
         if (ThisZone == null)
         {
             ThisZone = new Zone();

@@ -11,6 +11,7 @@ public partial class FieldEditor : IDisposable
 {
     protected override void OnInitialized()
     {
+        nfi.NumberDecimalSeparator = ".";
         UpdateGrid();
         UpdateMapTimer = new Timer(async x => await UpdateMapSize(), null, 0, 1000);
     }
@@ -26,7 +27,8 @@ public partial class FieldEditor : IDisposable
 
     bool loading = false;
 
-    CultureInfo info = CultureInfo.CreateSpecificCulture("en-GB");
+
+    NumberFormatInfo nfi = new NumberFormatInfo();
 
     double imageWidth = 2;
     double mapWidth = 0;

@@ -56,7 +56,7 @@
                                         @if (entity.points.Count > 0)
                                         {
                                             <svg width="100%" height="100%" viewBox="-1 -1 101 101">
-                                                <polyline stroke-linejoin="round" width="100" height="100" points="@entity.points.Select(p => ((p.x/entity.width)*100).ToString(info) + "," + ((p.y/entity.height)*100).ToString(info)+"").Aggregate((x,y) => x + " " + y) @((entity.points[0].x/entity.width)*100 + "," + (entity.points[0].y/entity.height)*100)" stroke="black" stroke-width="1" fill="none" />
+                                                <polyline stroke-linejoin="round" width="100" height="100" points="@entity.points.Select(p => ((p.x/entity.width)*100).ToString(nfi) + "," + ((p.y/entity.height)*100).ToString(nfi)+"").Aggregate((x,y) => x + " " + y) @((entity.points[0].x/entity.width)*100 + "," + (entity.points[0].y/entity.height)*100)" stroke="black" stroke-width="1" fill="none" />
                                             </svg>
                                         }
                                         <div class="MenuItemNameText" style="">
