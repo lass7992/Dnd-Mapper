@@ -79,7 +79,7 @@ else
                                     @if (wall.WallPoints.Count > 0)
                                     {
                                         <svg width="100%" height="100%" viewBox="-1 -1 101 101">
-                                            <polyline width="100" height="100" points="@wall.WallPoints.Select(p => (p.x * 100).ToString(nfi) + "," + (p.y * 100).ToString(nfi)+"").Aggregate((x,y) => x + " " + y)" stroke="black" stroke-width="1" fill="none" />
+                                            <polyline width="100" height="100" points="@wall.WallPoints.Select(p => (p.x * 100).ToString(System.Globalization.CultureInfo.InvariantCulture) + "," + (p.y * 100).ToString(System.Globalization.CultureInfo.InvariantCulture)).Aggregate((x,y) => x + " " + y)" stroke="black" stroke-width="1" fill="none" />
                                         </svg>
                                     }
                                 </div>
@@ -122,7 +122,7 @@ else
                         {
                             @for (int y = 0; y < thisField.gridY; y++)
                             {
-                                <div class="tile" style="width:@((gridSizeLength).ToString(nfi))px; left:@((thisField.offsetXStart + gridSizeLength*x).ToString(nfi))px; top:@((thisField.offsetYStart + gridSizeLength*y).ToString(nfi))px; @(x > 0 ? "border-left: 0px !important;" : "" ) @(y > 0 ? "border-top: 0px !important;" : "" )"></div>
+                                <div class="tile" style="width:@((gridSizeLength).ToString(System.Globalization.CultureInfo.InvariantCulture))px; left:@((thisField.offsetXStart + gridSizeLength*x).ToString(System.Globalization.CultureInfo.InvariantCulture))px; top:@((thisField.offsetYStart + gridSizeLength*y).ToString(System.Globalization.CultureInfo.InvariantCulture))px; @(x > 0 ? "border-left: 0px !important;" : "" ) @(y > 0 ? "border-top: 0px !important;" : "" )"></div>
                             }
                         }
                     </div>
