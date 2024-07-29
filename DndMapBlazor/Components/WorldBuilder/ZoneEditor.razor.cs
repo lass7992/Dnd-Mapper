@@ -92,11 +92,10 @@ public partial class ZoneEditor : IDisposable
         }
     }
 
-    public void ChangeMapEntityHandler(WorldMapEntity entity)
+    public async Task ChangeMapEntityHandler(WorldMapEntity entity)
     {
-        double imageWidth = 0;
-        double imageHeight = 0;
-        ChangeMapEntity.InvokeAsync(entity);
+        await ChangeMapEntity.InvokeAsync(entity);
+
     }
 
     public async Task UpdateMapSize()
@@ -104,6 +103,8 @@ public partial class ZoneEditor : IDisposable
         var newSize = await ImageHelper.GetMapSize(JS, "ZoneMap");
         if (newSize.HasValue && (imageWidth != newSize.Value.x || imageHeight != newSize.Value.y))
         {
+            imageWidth = newSize.Value.x;
+            imageHeight = newSize.Value.y;
             this.StateHasChanged();
         }
     }
