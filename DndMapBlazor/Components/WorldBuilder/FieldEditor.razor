@@ -1,6 +1,8 @@
 ﻿@using System.Globalization
 @using DndMapBlazor.Helper
 @using DndMapBlazor.Models
+@inject IJSRuntime JS
+
 @if (loading)
 {
     <h2>Loading</h2>
@@ -8,7 +10,7 @@
 else
 {
 
-    @if (field.mapImage == null)
+    @if (thisField.mapImage == null)
     {
         <div class="w-100;" style="text-align:center;">
             <InputFile OnChange="LoadFiles" />
@@ -70,14 +72,14 @@ else
 
 
                     <div class="row" style="margin:auto;width:100%">
-                        @foreach (var wall in walls)
+                        @foreach (var wall in thisField.Walls)
                         {
                             <div class="col-sm-12 col-md-6 col-lg-3 p-0">
                                 <div @onclick="x => currentWall = wall" class="wallMenuItem" style="@(wall == currentWall ? "background-color:rgba(55, 255, 255, 0.2);box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.8);" : "");">
                                     @if (wall.WallPoints.Count > 0)
                                     {
-                                        <svg width="100%" height="100%" viewBox="0 0 100 100">
-                                            <polyline width="100%" height="100%" points="@wall.WallPoints.Select(p => ((p.x/imageWidth)*100).ToString(info) + "," + ((p.y/imageHeight)*100).ToString(info)+"").Aggregate((x,y) => x + " " + y)" stroke="black" stroke-width="1" fill="none" />
+                                        <svg width="100%" height="100%" viewBox="-1 -1 101 101">
+                                            <polyline width="100" height="100" points="@wall.WallPoints.Select(p => (p.x * 100).ToString(info) + "," + (p.y * 100).ToString(info)+"").Aggregate((x,y) => x + " " + y)" stroke="black" stroke-width="1" fill="none" />
                                         </svg>
                                     }
                                 </div>
@@ -94,14 +96,14 @@ else
                 <div class="w-100;" style="text-align:center;">
                     @* Draw walls*@
                     <div style="width:0px; height:0px;position:relative">
-                        <svg width="@imageWidth" height="@imageHeight">
-                            @foreach (var wall in walls)
+                        <svg width="@imageWidth" height="@imageHeight" viewBox="0 0 @imageWidth @imageHeight">
+                            @foreach (var wall in thisField.Walls)
                             {
                                 @if (wall.WallPoints.Count > 0)
                                 {
-                                    <polyline points="@wall.WallPoints.Select(p => p.x + "," + p.y).Aggregate((x,y) => x + " " + y)" stroke="@(currentWall == wall ? "white" : "black")" stroke-width="@wall.width" fill="none" />
+                                    <polyline stroke-linejoin="round"  points="@wall.WallPoints.Select(p => p.x*imageWidth + "," + p.y*imageHeight).Aggregate((x,y) => x + " " + y)" stroke="@(currentWall == wall ? "white" : "black")" stroke-width="@wall.width" fill="none" />
 
-                                    @if (currentWall != null)
+                                    @if (currentWall != null && currentWall == wall)
                                     {
                                         @for (int i = 0; i < wall.WallPoints.Count; i++)
                                         {
@@ -118,9 +120,9 @@ else
                     <div style="width:0px; height:0px;position:relative">
                         @for (int x = 0; x < gridX; x++)
                         {
-                            @for (int y = 0; y < field.gridY; y++)
+                            @for (int y = 0; y < thisField.gridY; y++)
                             {
-                                <div class="tile" style="width:@((gridSizeLength).ToString(info))px; left:@((field.offsetXStart + gridSizeLength*x).ToString(info))px; top:@((field.offsetYStart + gridSizeLength*y).ToString(info))px; @(x > 0 ? "border-left: 0px !important;" : "" ) @(y > 0 ? "border-top: 0px !important;" : "" )"></div>
+                                <div class="tile" style="width:@((gridSizeLength).ToString(info))px; left:@((thisField.offsetXStart + gridSizeLength*x).ToString(info))px; top:@((thisField.offsetYStart + gridSizeLength*y).ToString(info))px; @(x > 0 ? "border-left: 0px !important;" : "" ) @(y > 0 ? "border-top: 0px !important;" : "" )"></div>
                             }
                         }
                     </div>
@@ -134,146 +136,10 @@ else
                     }
 
 
-                    <img class="w-100" src="data:image;base64, @field.mapImage" />
+                    <img id="FieldMap" class="w-100" src="data:image;base64, @thisField.mapImage" />
                 </div>
             </div>
         </div>
 
-    }
-}
-@code {
-    protected override void OnInitialized()
-    {
-        UpdateGrid();
-    }
-
-    [Parameter]
-    public Field field { get; set; } 
-
-    bool loading = false;
-
-    CultureInfo info = CultureInfo.CreateSpecificCulture("en-GB");
-
-    double imageWidth = 1222;
-    double mapWidth = 0;
-    double imageHeight = 1222;
-    double mapHeight = 0;
-
-    public double gridSizeLength = 4;
-
-
-
-    private List<Wall> walls = new List<Wall>();
-
-    int gridX
-    {
-        get
-        {
-            return field.gridX;
-        }
-        set
-        {
-            field.gridX = value;
-            UpdateGrid();
-        }
-    }
-
-    int offsetXStart
-    {
-        get
-        {
-            return field.offsetXStart;
-        }
-        set
-        {
-            field.offsetXStart = value;
-            UpdateGrid();
-        }
-    }
-
-    int offsetXEnd
-    {
-        get
-        {
-            return field.offsetXEnd;
-        }
-        set
-        {
-            field.offsetXEnd = value;
-            UpdateGrid();
-        }
-    }
-
-    int offsetYStart
-    {
-        get
-        {
-            return field.offsetYStart;
-        }
-        set
-        {
-            field.offsetYStart = value;
-            UpdateGrid();
-        }
-    }
-
-    int offsetYEnd
-    {
-        get
-        {
-            return field.offsetYEnd;
-        }
-        set
-        {
-            field.offsetYEnd = value;
-            UpdateGrid();
-        }
-    }
-
-
-
-
-    private void UpdateGrid()
-    {
-        mapWidth = imageWidth - field.offsetXStart - field.offsetXEnd;
-        mapHeight = imageHeight - field.offsetYStart - field.offsetYEnd;
-
-        gridSizeLength = mapWidth / gridX;
-
-        field.gridY = (int)(mapHeight / gridSizeLength);
-    }
-
-    private async void LoadFiles(InputFileChangeEventArgs e)
-    {
-        loading = true;
-        await using MemoryStream fs = new MemoryStream();
-        await e.File.OpenReadStream().CopyToAsync(fs);
-        byte[] somBytes = ImageFileHelper.GetBytes(fs);
-        field.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
-        loading = false;
-        this.StateHasChanged();
-    }
-
-
-    public Wall? currentWall;
-    public void AddWall()
-    {
-        var newWall = new Wall();
-        currentWall = newWall;
-        walls.Add(newWall);
-        this.StateHasChanged();
-    }
-
-    public void StopWall()
-    {
-        currentWall = null;
-    }
-
-
-
-    public void AddWallPointHandler(MouseEventArgs x)
-    {
-        if (currentWall != null && x.Button == 0)
-            currentWall.AddWallpoint(x.OffsetX, x.OffsetY);
     }
 }

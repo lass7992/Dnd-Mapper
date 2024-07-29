@@ -3,7 +3,6 @@
 @using DndMapBlazor.Models
 @using DndMapBlazor.Models.Enums
 @using DndMapBlazor.Models.WorldBuilderModels
-@inject HttpClient Http
 
 <div style="width:100%; margin:auto">
     @if (!IsTopLevel)
@@ -56,8 +55,8 @@
                                     <div @onclick="x => SelectedMapEntity = entity" class="ZoneMenuItem @(entity is Zone ? "ZoneMenuItemZone" : "ZoneMenuItemField")" style="padding:5px;position:relative; @(entity == SelectedMapEntity ? "background-color: rgba(55, 255, 255, 0.2); box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.8);" : "");">
                                         @if (entity.points.Count > 0)
                                         {
-                                            <svg width="100%" height="100%" viewBox="0 0 @(entity.width) @(entity.height)">
-                                                <polyline width="@(entity.width)" height="@(entity.height)" points="@entity.points.Select(p => (p.x).ToString(info) + "," + (p.y).ToString(info)+"").Aggregate((x,y) => x + " " + y) @(entity.points[0].x + "," + entity.points[0].y)" stroke="black" stroke-width="1" fill="none" />
+                                            <svg width="100%" height="100%" viewBox="-1 -1 101 101">
+                                                <polyline stroke-linejoin="round" width="100" height="100" points="@entity.points.Select(p => ((p.x/entity.width)*100).ToString(info) + "," + ((p.y/entity.height)*100).ToString(info)+"").Aggregate((x,y) => x + " " + y) @((entity.points[0].x/entity.width)*100 + "," + (entity.points[0].y/entity.height)*100)" stroke="black" stroke-width="1" fill="none" />
                                             </svg>
                                         }
                                         <div class="MenuItemNameText" style="">
@@ -68,36 +67,36 @@
                             }
                         </div>
                     </div>
-
-
-
                 </div>
 
                 @* Map image *@
                 <div class="col-8" style="padding:0px;">
                     <div class="w-100;" style="text-align:center;">
-                        @* Draw walls*@
-                        <div style="width:0px; height:0px;position:relative">
-                            @foreach (var entity in ThisZone.MapEntities)
-                            {
-                                <div class="mapEntity" style="position:absolute;left:@(entity.x)px;top:@(entity.y)px;" @onclick="x => ChangeMapEntityHandler(entity)">
-                                    <svg stroke-linejoin="bevel"  width="@entity.width" height="@entity.height">
+                        @* Draw entities*@
+                        @if (imageWidth != 0 && imageHeight != 0)
+                        {
+                            <div style="width:0px; height:0px;position:relative">
+                                @foreach (var entity in ThisZone.MapEntities)
+                                {
+                                    <div class="mapEntity" style="position:absolute;left:@(entity.x*imageWidth)px;top:@(entity.y*imageHeight)px;" @onclick="x => ChangeMapEntityHandler(entity)">
+                                        <svg stroke-linejoin="round" width="@(entity.width*imageWidth)" height="@(entity.height*imageHeight)">
                                             @if (entity.points.Count > 0)
                                             {
-                                            <polyline stroke-linejoin="round" points="@entity.points.Select(p => p.x + "," + p.y).Aggregate((x,y) => x + " " + y) @(entity.points[0].x + "," + entity.points[0].y)" stroke="@(SelectedMapEntity == entity ? "white" : "black")" stroke-width="1" fill="none" />
+                                                <polyline stroke-linejoin="round" points="@entity.points.Select(p => p.x*imageWidth + "," + p.y*imageHeight).Aggregate((x,y) => x + " " + y) @(entity.points[0].x*imageWidth + "," + entity.points[0].y*imageHeight)" stroke="@(SelectedMapEntity == entity ? "white" : "black")" stroke-width="1" fill="none" />
 
                                                 @if (SelectedMapEntity != null)
                                                 {
                                                     @for (int i = 0; i < entity.points.Count; i++)
                                                     {
-                                                        <circle stroke="@(i == entity.points.Count-1 && entity == SelectedMapEntity ? "yellow" : "gray")" stroke-width="2" r="5" cx="@entity.points[i].x" cy="@entity.points[i].y"></circle>
+                                                        <circle stroke="@(i == entity.points.Count-1 && entity == SelectedMapEntity ? "yellow" : "gray")" stroke-width="2" r="5" cx="@(entity.points[i].x*imageWidth)" cy="@(entity.points[i].y*imageHeight)"></circle>
                                                     }
                                                 }
                                             }
-                                    </svg>
-                                </div>
-                            }
-                        </div>
+                                        </svg>
+                                    </div>
+                                }
+                            </div>
+                        }
 
                         @if (SelectedMapEntity != null)
                         {
@@ -107,90 +106,10 @@
                             </div>
                         }
 
-                        <img class="w-100" src="data:image;base64, @ThisZone.mapImage" />
+                        <img id="ZoneMap" class="w-100" src="data:image;base64, @ThisZone.mapImage" />
                     </div>
                 </div>
             </div>
         }
     }
 </div>
-
-@code {
-    [Parameter]
-    public Zone? ThisZone { get; set; }
-
-    [Parameter]
-    public EventCallback<WorldMapEntity> ChangeMapEntity { get; set; }
-
-    [Parameter]
-    public bool IsTopLevel { get; set; }
-
-    [Parameter]
-    public ChangeMap ChangeMap { get; set; }
-
-
-    bool loading = false;
-    CultureInfo info = CultureInfo.CreateSpecificCulture("en-GB");
-
-    private WorldMapEntity? SelectedMapEntity;
-
-
-    protected override void OnInitialized()
-    {
-        if (ThisZone == null)
-        {
-            ThisZone = new Zone();
-        }
-    }
-
-    private async void LoadFiles(InputFileChangeEventArgs e)
-    {
-        loading = true;
-        await using MemoryStream fs = new MemoryStream();
-        await e.File.OpenReadStream().CopyToAsync(fs);
-        byte[] somBytes = ImageFileHelper.GetBytes(fs);
-        ThisZone!.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
-        loading = false;
-        this.StateHasChanged();
-    }
-
-    double imageWidth = 1222;
-    double imageHeight = 1222;
-
-    public double gridSizeLength = 4;
-
-    public void AddZone()
-    {
-        var newZone = new Zone();
-        newZone.ParentZone = ThisZone;
-        SelectedMapEntity = newZone;
-        ThisZone!.MapEntities.Add(newZone);
-        this.StateHasChanged();
-    }
-
-    public void AddField()
-    {
-        var newField = new Field();
-        SelectedMapEntity = newField;
-        ThisZone!.MapEntities.Add(newField);
-        this.StateHasChanged();
-    }
-
-    public void StopEditing()
-    {
-        SelectedMapEntity = null;
-    }
-
-    public void AddPointHandler(MouseEventArgs x)
-    {
-        if (SelectedMapEntity != null && x.Button == 0) 
-        {           
-            SelectedMapEntity.AddPoint(x.OffsetX, x.OffsetY);
-        }
-    }
-
-    public void ChangeMapEntityHandler(WorldMapEntity entity)
-    {
-        ChangeMapEntity.InvokeAsync(entity);
-    }
-}

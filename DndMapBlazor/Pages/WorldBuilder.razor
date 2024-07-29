@@ -9,8 +9,6 @@
 
 <PageTitle>World Builder</PageTitle>
 <div style="width:80%; margin:auto">
-    <h1 style="text-align:center; margin:auto">World Builder</h1>
-
     @* Menu selector *@
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark" style="padding-left:10px; border-radius: 10px 10px 0px 0px">
         <a class="navbar-brand" @onclick="x => {selectedField = null; selectedWorld = topWorld; currentMenuItem = WorldBuilderMenuItems.None;}">Top</a>
@@ -35,31 +33,40 @@
         </div>
     </nav>
 
-    <div style="position:relative; width:100%; display:@(RunChangeZone && changeMap.ToImage != null ? "none" : "block")">
+    <div style="position:relative; width:100%; display:@(RunChangeZone ? "none" : "block")">
         @if(currentMenuItem == WorldBuilderMenuItems.None)
         {
             <ZoneEditor IsTopLevel="selectedWorld == topWorld" ThisZone="selectedWorld" ChangeMapEntity="ChangeSelected" ChangeMap="changeMap"></ZoneEditor>
         }
         else if(currentMenuItem == WorldBuilderMenuItems.EditField)
         {
-            <FieldEditor field="selectedField"></FieldEditor>
+            <FieldEditor thisField="selectedField"></FieldEditor>
         }
     </div>
 
     @if (RunChangeZone && (changeMap.ToImage != null || changeMap.FromImage != null))
     {
-        <div style="position:relative;width:100%; overflow:hidden; height:@(changeMap.height)px">
-            @if (@changeMap.ToImage != null)
-            {
-                <img class="w-100" src="data:image;base64, @changeMap.ToImage" style="position:absolute;top:0;left:0;" />
-            }
-            @if (@changeMap.FromImage != null)
-            {
-                <img class="w-100" src="data:image;base64, @changeMap.FromImage" style="transform-origin: @(changeMap.xPos + "px " + changeMap.yPos+ "px"); position:absolute;top:0;left:0;transition:normal linear @(mapChangeAnimationTime)s; transform:scale(@(RunChangeZoneAnimation ? ((changeMap.ZoomIn ?? true) ? "10" : "1") : (!(changeMap.ZoomIn ?? true) ? "10" : "1")));  opacity:@(RunChangeZoneAnimation ? "0" : "100")" />
-                @* <img class="w-100" src="data:image;base64, @changeMap.FromImage" style="animation-iteration-count: infinite; animation-play-state:running; animation-direction:normal; @((changeMap.ZoomIn ?? true) ? "animation: zoomIn 2s;" : "animation: fadeOut 2s;" )" /> *@
-            }
-            @* <img class="w-100" src="data:image;base64, @changeMap.ToImage" style="@((changeMap.ZoomIn ?? true) ? "" : "animation: zoomOut 2s;" )" /> *@
+        <div class="row" style="padding:0px;margin:0px; width:100%">
+            <div class="col-4" style="border:2px solid black; padding:5px; position:relative; background-color:lightgray; opacity:0">
+            </div>
+            <div class="col-8" style="padding:0px;">
+                <div style="position:relative;width:100%; overflow:hidden; height:800px">
+                    @if (@changeMap.ToImage != null)
+                    {
+                        <img class="w-100" src="data:image;base64, @changeMap.ToImage" style="position:absolute;top:0;left:0; transform-origin: @((changeMap.xPos*100) + "% " + (changeMap.yPos*100)+ "%"); position:absolute;top:0;left:0;transition:normal linear @(mapChangeAnimationTime)s;transform:scale(@(changeMap.ZoomIn ?? true ? "1" : (RunChangeZoneAnimation ? "1" : "10"))); " />
+                    }
+                    @if (@changeMap.FromImage != null)
+                    {
+                        <img class="w-100" src="data:image;base64, @changeMap.FromImage" style="transform-origin: @((changeMap.xPos*100) + "% " + (changeMap.yPos*100)+ "%"); position:absolute;top:0;left:0;transition:normal linear @(mapChangeAnimationTime)s; transform:scale(@(RunChangeZoneAnimation && (changeMap.ZoomIn ?? true) ? "10" : "1"));  opacity:@(RunChangeZoneAnimation ? "0" : "100")" />
+                        @* <img class="w-100" src="data:image;base64, @changeMap.FromImage" style="animation-iteration-count: infinite; animation-play-state:running; animation-direction:normal; @((changeMap.ZoomIn ?? true) ? "animation: zoomIn 2s;" : "animation: fadeOut 2s;" )" /> *@
+                    }
+                    @* <img class="w-100" src="data:image;base64, @changeMap.ToImage" style="@((changeMap.ZoomIn ?? true) ? "" : "animation: zoomOut 2s;" )" /> *@
+                </div>
+
+            </div>
+
         </div>
+
     }
 
 </div>
@@ -74,12 +81,12 @@
     public bool RunChangeZone { get; set; } = false;
     public bool RunChangeZoneAnimation { get; set; } = false;
 
-    public int mapChangeAnimationTime { get; set; } = 2;
+    public double mapChangeAnimationTime { get; set; } = 0.8;
 
     protected override void OnInitialized()
     {
         selectedWorld = topWorld;
-        StartAnimationTimer = new System.Timers.Timer(100);
+        StartAnimationTimer = new System.Timers.Timer(10);
         StartAnimationTimer.Elapsed += (x, y) =>
         {
             RunChangeZoneAnimation = true;
@@ -106,7 +113,7 @@
         loading = true;
         await using MemoryStream fs = new MemoryStream();
         await e.File.OpenReadStream().CopyToAsync(fs);
-        byte[] somBytes = ImageFileHelper.GetBytes(fs);
+        byte[] somBytes = ImageHelper.GetBytes(fs);
         topWorld.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
         loading = false;
         this.StateHasChanged();
@@ -118,31 +125,32 @@
 
     private void ChangeSelected(WorldMapEntity entity)
     {   
+        changeMap.FromImage = selectedWorld.mapImage;
+        changeMap.ToImage = entity.mapImage;
+
+
+        if (entity == topWorld || entity == selectedWorld.ParentZone)
+        {
+            changeMap.ZoomIn = false;
+            changeMap.xPos = ((selectedWorld.x + (selectedWorld.width / 2)));
+            changeMap.yPos = ((selectedWorld.y + (selectedWorld.height / 2)));
+        }
+        else
+        {
+            changeMap.ZoomIn = true;
+            changeMap.xPos = (entity.x + (entity.width / 2));
+            changeMap.yPos = (entity.y + (entity.height / 2));
+        }
+
+        changeMap.height = 800;
+
+        RunChangeZone = true;
+        RunChangeZoneAnimation = false;
+        StartAnimationTimer.Start();
+        EndAnimationTimer.Start();
+
         if (entity is Zone)
         {
-            changeMap.FromImage = selectedWorld.mapImage;
-            changeMap.ToImage = entity.mapImage;
-
-            if (entity == topWorld || entity == selectedWorld.ParentZone)
-            {
-                changeMap.ZoomIn = false;
-                changeMap.xPos = ((int)(selectedWorld.x + (selectedWorld.width/2))); //TODO get image width
-                changeMap.yPos = ((int)(selectedWorld.y + (selectedWorld.height / 2))); //TODO get image width
-            }
-            else
-            {
-                changeMap.ZoomIn = true;
-                changeMap.xPos = (int)(entity.x + (entity.width / 2));
-                changeMap.yPos = (int)(entity.y + (entity.height / 2));
-            }
-
-            changeMap.height = 800;
-
-            RunChangeZone = true;
-            RunChangeZoneAnimation = false;
-            StartAnimationTimer.Start();
-            EndAnimationTimer.Start();
-
             selectedWorld = entity as Zone;
             selectedField = null;
         }
