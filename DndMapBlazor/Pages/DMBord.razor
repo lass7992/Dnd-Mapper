@@ -1,0 +1,51 @@
+﻿@page "/DMBord"
+<div style="width:100%">
+
+    @if (session.state == Models.SessionEntites.SessionState.setWorld)
+    {
+        <div class="w-100;" style="text-align:center;margin-top:10px">
+            @if (loading)
+            {
+                <h2>Loading</h2>
+                <span class="loader"></span>
+            }
+            else
+            {
+                    <InputFile OnChange="LoadWorld" />
+            }
+        </div>
+    }
+    else if (session.state == Models.SessionEntites.SessionState.SetPlayers)
+    {
+        <div style="background-image:url(https://www.transparenttextures.com/patterns/textured-paper.png);background-size:400px; background-color:black;border-radius:10px;">
+            <div style="border:5px solid black; border-radius:10px; height:80vh; padding:20px; overflow-x:auto; display:flex; width:100%; background-color:rgba(115,82,63,0.8); ">
+                <div style="display:flex; width:100vh;">
+                    @foreach (var player in session.players)
+                    {
+                        <div class="col playerSheet">
+                            <div style="aspect-ratio:1; margin:10px; border:1px solid black;overflow:hidden;background-color:lavender;">
+                                @if(!string.IsNullOrEmpty(player.image))
+                                {
+                                    <img id="FieldMap" class="w-100" src="data:image;base64, @player.image" />
+                                }
+                                else{
+                                    <div style="text-align:center; margin-left:auto;margin-right:auto;margin-top: 40%;-ms-transform: translatey(-50%); transform: translatey(-50%);">
+                                        <InputFile OnChange="x => AddPlayerImage(x, player)"/>
+                                    </div>
+                                }
+                            </div>
+                            <div class="PlayerSheetName" style="">
+                                <input style="font-family:FantasyFont5; filter: drop-shadow(3px 3px 1px rgba(0, 0, 0, 0.3));" type="text" @bind-value="player.Name" placeholder="Enter name...."/>
+                            </div>
+                            <button @onclick="x => RemovePlayer(player)" class="btn btn-outline-warning fw-bolder" style="margin: auto;position: absolute;left: 50%;bottom:0; -ms-transform: translate(-50%,-30%); transform: translate(-50%,-30%);">Kick</button>
+                        </div>                
+                    }
+
+                    <div class="col playerSheet">
+                        <button @onclick="AddPlayer" class="btn btn-dark" style="margin: auto;position: absolute;top: 50%;left:50%; -ms-transform: translate(-50%,-50%); transform: translate(-50%,-50%);">Add player</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

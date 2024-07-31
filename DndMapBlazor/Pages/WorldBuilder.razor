@@ -5,6 +5,9 @@
 @using DndMapBlazor.Models
 @using DndMapBlazor.Models.Enums
 @using DndMapBlazor.Models.WorldBuilderModels
+@using System.Text
+@inject IJSRuntime JS
+
 @inject HttpClient Http
 
 <PageTitle>World Builder</PageTitle>
@@ -29,6 +32,11 @@
                     </li>
                 }
             </ul>
+
+            <div style="right: 0px;position: absolute;margin-right: 10px;">
+                <button @onclick="SaveWorld" class="btn btn-outline-success" type="submit">Save</button>
+                <button @onclick="LoadWorld" disabled class="btn btn-outline-warning" type="submit" style="opacity:30%; background: repeating-linear-gradient(45deg,rgba(200,200,200,0.4),rgba(200,200,200,0.4) 5px,rgba(100,100,100,0.4) 5px,  rgba(100,100,100,0.4) 10px);">Load</button>
+            </div>
 
         </div>
     </nav>
@@ -105,20 +113,6 @@
 
     private WorldBuilderMenuItems currentMenuItem = WorldBuilderMenuItems.None;
 
-
-    bool loading = false;
-
-    private async void LoadFiles(InputFileChangeEventArgs e)
-    {
-        loading = true;
-        await using MemoryStream fs = new MemoryStream();
-        await e.File.OpenReadStream().CopyToAsync(fs);
-        byte[] somBytes = ImageHelper.GetBytes(fs);
-        topWorld.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
-        loading = false;
-        this.StateHasChanged();
-    }
-
     System.Timers.Timer StartAnimationTimer = new System.Timers.Timer();
     System.Timers.Timer EndAnimationTimer = new System.Timers.Timer();
 
@@ -159,5 +153,26 @@
             selectedField = entity as Field;
             currentMenuItem = WorldBuilderMenuItems.EditField;
         }  
+    }
+
+    private void LoadWorld()
+    {
+        // Create Load
+        //var saveJson = System.Text.Json.JsonSerializer.Deserialize<Zone>(topWorld);
+    }
+
+    private async Task SaveWorld()
+    {
+        var saveJson = System.Text.Json.JsonSerializer.Serialize(topWorld);
+        await TriggerDownloadFileFromStream(saveJson);
+    }
+
+
+    private async Task TriggerDownloadFileFromStream(string file)
+    {
+        var fileName = "DnDsave.json";
+        using MemoryStream mem = new MemoryStream(Encoding.UTF8.GetBytes(file));
+        using var streamRef = new DotNetStreamReference(stream: mem);
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
     }
 }

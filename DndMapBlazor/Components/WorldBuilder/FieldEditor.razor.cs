@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
+using System.Text.Json;
 
 namespace DndMapBlazor.Components.WorldBuilder;
 
@@ -122,7 +123,7 @@ public partial class FieldEditor : IDisposable
     {
         loading = true;
         await using MemoryStream fs = new MemoryStream();
-        await e.File.OpenReadStream().CopyToAsync(fs);
+        await e.File.OpenReadStream(5120000).CopyToAsync(fs);
         byte[] somBytes = ImageHelper.GetBytes(fs);
         thisField.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
         loading = false;
