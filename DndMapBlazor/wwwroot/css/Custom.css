@@ -32,6 +32,16 @@ h1 {
     background-size: 100% auto;
     background-repeat: no-repeat;
     box-sizing: border-box;
+    animation: infinite rotate 2sec alternate;
+}
+@keyframes rotate {
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360);
+    }
 }
 
     .loader::after {

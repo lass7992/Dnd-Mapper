@@ -59,7 +59,7 @@ public partial class ZoneEditor : IDisposable
         loading = true;
         await using MemoryStream fs = new MemoryStream();
         await e.File.OpenReadStream(5120000).CopyToAsync(fs);
-        byte[] somBytes = ImageHelper.GetBytes(fs);
+        byte[] somBytes = await ImageHelper.GetBytes(fs);
         ThisZone!.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
         loading = false;
         this.StateHasChanged();
@@ -77,6 +77,7 @@ public partial class ZoneEditor : IDisposable
     public void AddField()
     {
         var newField = new Field();
+        newField.ParentZone = ThisZone;
         SelectedMapEntity = newField;
         ThisZone!.MapEntities.Add(newField);
         this.StateHasChanged();
@@ -98,7 +99,6 @@ public partial class ZoneEditor : IDisposable
     public async Task ChangeMapEntityHandler(WorldMapEntity entity)
     {
         await ChangeMapEntity.InvokeAsync(entity);
-
     }
 
     public async Task UpdateMapSize()

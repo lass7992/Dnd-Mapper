@@ -12,5 +12,8 @@
         public int offsetYStart;
         public int offsetYEnd;
 
+        public Field()
+        {
+        }
     }
 }

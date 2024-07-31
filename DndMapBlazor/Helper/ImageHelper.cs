@@ -7,11 +7,11 @@ namespace DndMapBlazor.Helper
 {
     public static class ImageHelper
     {
-        public static byte[] GetBytes(Stream stream)
+        public static async Task<byte[]> GetBytes(Stream stream)
         {
             var bytes = new byte[stream.Length];
             stream.Seek(0, SeekOrigin.Begin);
-            stream.ReadAsync(bytes, 0, bytes.Length);
+            await stream.ReadAsync(bytes, 0, bytes.Length);
             stream.Dispose();
             return bytes;
         }

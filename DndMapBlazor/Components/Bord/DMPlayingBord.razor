@@ -1,0 +1,18 @@
+﻿@layout Layout.PlayingLayout;
+
+@using DndMapBlazor.Models
+@using DndMapBlazor.Models.SessionEntites
+
+<div>
+    <div>
+        @if (currentZone is Zone)
+        {
+            <DmPlayingBordZone thisZone="currentZone as Zone" SessionGameMetaData="SessionGameMetaData" ChangeMapEntity="ChangeMapEntity"></DmPlayingBordZone>
+        }
+        else if(currentZone is Field){
+            <DmPlayingBordField thisField="currentZone as Field"></DmPlayingBordField>
+        }
+    </div>
+
+    <img id="ZoneMap" class="w-100" src="data:image;base64, @currentZone.mapImage" />
+</div>

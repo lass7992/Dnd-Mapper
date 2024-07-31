@@ -5,6 +5,10 @@
         public int width = 5;
         public List<Points> WallPoints = new List<Points>();
 
+        public Wall()
+        {
+        }
+
         public void AddWallpoint(double x, double y) 
         {
             WallPoints.Add(new Points(x, y));        
@@ -29,10 +33,15 @@
         }
     }
 
-    public class Points 
+    public class Points
     {
 
-        public double x, y;
+        public double x {get;set;}
+        public double y {get;set;}
+
+        public Points()
+        {
+        }
 
         public Points(double x, double y)
         {

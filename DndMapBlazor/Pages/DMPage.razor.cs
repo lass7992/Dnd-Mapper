@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace DndMapBlazor.Pages
 {
-    public partial class DMBord
+    public partial class DMPage
     {
         private Session session = new Session();
 
@@ -32,7 +32,7 @@ namespace DndMapBlazor.Pages
             loading = true;
             await using MemoryStream fs = new MemoryStream();
             await e.File.OpenReadStream(1000000).CopyToAsync(fs);
-            var imageBytes = ImageHelper.GetBytes(fs);
+            var imageBytes = await ImageHelper.GetBytes(fs);
             pl.image = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
             loading = false;
             this.StateHasChanged();
@@ -40,15 +40,15 @@ namespace DndMapBlazor.Pages
 
 
 
-        private async void LoadWorld(InputFileChangeEventArgs e)
+        private async Task LoadWorld(InputFileChangeEventArgs e)
         {
             loading = true;
-            await using MemoryStream fs = new MemoryStream();
-            await e.File.OpenReadStream(100000000).CopyToAsync(fs);
-            var worldBytes = ImageHelper.GetBytes(fs);
-            string worldJson = Encoding.UTF8.GetString(worldBytes);
+//            await using MemoryStream fs = new MemoryStream();
+//            await e.File.OpenReadStream(5120000).CopyToAsync(fs);
 
-            var newZone = JsonSerializer.Deserialize<Zone>(worldJson);
+            var newZone = await SaveLoaderHelper.LoadWorld(e.File.OpenReadStream(5120000));
+
+
             if (newZone != null) { 
                 session.World = newZone;
             }

@@ -1,0 +1,6 @@
+﻿.mapEntity {
+}
+
+    .mapEntity :hover {
+        filter: drop-shadow(0px 0px 5px rgb(0, 0, 0, 100%)) drop-shadow(0px 0px 5px rgb(0, 0, 0, 100%)) blur(1px);
+    }

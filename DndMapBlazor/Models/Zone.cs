@@ -9,7 +9,6 @@
         public Zone(double x, double y, double width, double height) : base(x, y, width, height)
         {
         }
-        public Zone? ParentZone { get; set; }
 
         public List<WorldMapEntity> MapEntities { get; set; } = new List<WorldMapEntity>();
     }

@@ -124,7 +124,7 @@ public partial class FieldEditor : IDisposable
         loading = true;
         await using MemoryStream fs = new MemoryStream();
         await e.File.OpenReadStream(5120000).CopyToAsync(fs);
-        byte[] somBytes = ImageHelper.GetBytes(fs);
+        byte[] somBytes = await ImageHelper.GetBytes(fs);
         thisField.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
         loading = false;
         this.StateHasChanged();

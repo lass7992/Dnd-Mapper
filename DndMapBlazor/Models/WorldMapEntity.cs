@@ -1,6 +1,9 @@
-﻿namespace DndMapBlazor.Models
+﻿using System.Text.Json.Serialization;
+using System.Xml.Serialization;
+
+namespace DndMapBlazor.Models
 {
-    public abstract class WorldMapEntity 
+    public class WorldMapEntity 
     {
         public WorldMapEntity()
         {
@@ -21,6 +24,9 @@
         public List<Points> points { get; set; } = new List<Points>();
         public string name { get; set; } = "";
         public string? mapImage { get; set; }
+
+        [JsonIgnore]
+        public Zone? ParentZone { get; set; }
 
         public void AddPoint(double x, double y)
         {

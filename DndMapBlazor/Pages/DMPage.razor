@@ -1,4 +1,6 @@
-﻿@page "/DMBord"
+﻿@page "/DMPage"
+@using DndMapBlazor.Components.Bord
+
 <div style="width:100%">
 
     @if (session.state == Models.SessionEntites.SessionState.setWorld)
@@ -17,9 +19,12 @@
     }
     else if (session.state == Models.SessionEntites.SessionState.SetPlayers)
     {
+        <div class="row">
+            <button disabled="@(session.players.Count==0)" @onclick="x => session.state = Models.SessionEntites.SessionState.Started" class="btn btn-outline-primary" style="margin: auto; margin-bottom:10px; width:max-content">Start session</button>
+        </div>
         <div style="background-image:url(https://www.transparenttextures.com/patterns/textured-paper.png);background-size:400px; background-color:black;border-radius:10px;">
             <div style="border:5px solid black; border-radius:10px; height:80vh; padding:20px; overflow-x:auto; display:flex; width:100%; background-color:rgba(115,82,63,0.8); ">
-                <div style="display:flex; width:100vh;">
+                <div style="display:flex; width:90vw;">
                     @foreach (var player in session.players)
                     {
                         <div class="col playerSheet">
@@ -48,4 +53,9 @@
             </div>
         </div>
     }
+    else if (session.state == Models.SessionEntites.SessionState.Started)    
+    {
+        <DMPlayingBord session="session"></DMPlayingBord>
+    }
+
 </div>
