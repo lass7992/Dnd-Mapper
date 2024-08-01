@@ -31,3 +31,9 @@ function triggerFileDownload(fileName, url) {
     anchorElement.click();
     anchorElement.remove();
 }
+
+function FullScreen(id)
+{
+    const screenElement = document.getElementById(id);
+    screenElement.requestFullscreen();
+}

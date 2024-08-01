@@ -14,6 +14,7 @@
         loadSesion,
         setWorld,
         SetPlayers,
+        Settings,
         Started
     }
 
