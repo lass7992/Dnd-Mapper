@@ -13,7 +13,7 @@ namespace DndMapBlazor.Components.WorldBuilder;
 public partial class ZoneEditor : IDisposable
 {
     [Inject]
-    IJSRuntime JS { get; set; }
+    IJSRuntime? JS { get; set; }
 
     [Parameter]
     public Zone? ThisZone { get; set; }
@@ -25,13 +25,13 @@ public partial class ZoneEditor : IDisposable
     public bool IsTopLevel { get; set; }
 
     [Parameter]
-    public ChangeMap ChangeMap { get; set; }
+    public ChangeMap? ChangeMap { get; set; }
 
 
     bool loading = false;
 
     private WorldMapEntity? SelectedMapEntity;
-    public Timer UpdateMapTimer { get; set; }
+    public Timer? UpdateMapTimer { get; set; }
 
     double imageWidth = 0;
     double imageHeight = 0;
@@ -103,7 +103,7 @@ public partial class ZoneEditor : IDisposable
 
     public async Task UpdateMapSize()
     {
-        var newSize = await ImageHelper.GetMapSize(JS, "ZoneMap");
+        var newSize = await ImageHelper.GetMapSize(JS!, "ZoneMap");
         if (newSize.HasValue && (imageWidth != newSize.Value.x || imageHeight != newSize.Value.y))
         {
             imageWidth = newSize.Value.x;
@@ -114,6 +114,6 @@ public partial class ZoneEditor : IDisposable
 
     public void Dispose()
     {
-        UpdateMapTimer.Dispose();
+        UpdateMapTimer!.Dispose();
     }
 }

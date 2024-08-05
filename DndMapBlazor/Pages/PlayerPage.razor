@@ -1,19 +1,28 @@
 ﻿@layout PlayingLayout
 @page "/PlayerPage"
-
-@using DndMapBlazor.Components.Bord
-@using Layout
+@using DndMapBlazor.Components.Bord.Player
+@using DndMapBlazor.Models.SessionEntites
 
 <div id="view" style="width:100%; height:100%;">
-    @if(!isFullScreen)
+    @if (!isFullScreen)
     {
         <div class="row">
             <button @onclick="OpenInFullScreen" class="btn btn-outline-primary" style="margin: auto; margin-bottom:10px; width:max-content">FullScreen</button>
         </div>
     }
-    else if (session != null)
+    else if (command!.state == GameCommunicationState.Settings) 
     {
-        <DMPlayingBord session="session" />
+        @if (command!.Command == GameCommunicationCommand.SetupBord)
+        { 
+        <div style="margin:auto; background-color:white; padding:50px; border-radius:10px; width:fit-content">
+            <span> Measure this and write into dm page</span>
+            <div style="width:100px; height:20px; background-color:black; margin:auto;"></div>
+        </div>
+        }
+    }
+    else if (command!.state == GameCommunicationState.Running)
+    {
+        <PlayerBord session="session" events="events"></PlayerBord>
     }
 </div>
 

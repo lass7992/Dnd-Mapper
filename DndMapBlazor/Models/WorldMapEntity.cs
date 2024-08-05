@@ -17,16 +17,25 @@ namespace DndMapBlazor.Models
             this.height = height;
         }
 
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+
+
+        // MapEntity values
         public double x { get; set; } = 200000;
         public double y { get; set; } = 200000;
         public double width { get; set; } 
         public double height { get; set; }
+
         public List<Points> points { get; set; } = new List<Points>();
         public string name { get; set; } = "";
         public string? mapImage { get; set; }
 
         [JsonIgnore]
         public Zone? ParentZone { get; set; }
+
+
+
 
         public void AddPoint(double x, double y)
         {

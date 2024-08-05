@@ -12,9 +12,9 @@ namespace DndMapBlazor.Helper
             var newZone = await JsonSerializer.DeserializeAsync<Zone>(jsonStream);
 
             //Instantiate parentZones
-            SetParentsOnZone(newZone);
+            SetParentsOnZone(newZone!);
 
-            return newZone;
+            return newZone!;
         }
         private static void SetParentsOnZone(Zone parentZone) 
         {

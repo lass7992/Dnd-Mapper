@@ -3,15 +3,15 @@ using DndMapBlazor.Models;
 using DndMapBlazor.Models.SessionEntites;
 using Microsoft.AspNetCore.Components;
 
-namespace DndMapBlazor.Components.Bord
+namespace DndMapBlazor.Components.Bord.DM
 {
-    public partial class DmPlayingBordZone 
+    public partial class DmPlayingBordZone
     {
         [Parameter]
-        public Zone thisZone { get; set; }
+        public Zone? thisZone { get; set; }
 
         [Parameter]
-        public SessionGameMetaData SessionGameMetaData { get; set; }
+        public SessionGameMetaData? SessionGameMetaData { get; set; }
 
         [Parameter]
         public EventCallback<WorldMapEntity> ChangeMapEntity { get; set; }

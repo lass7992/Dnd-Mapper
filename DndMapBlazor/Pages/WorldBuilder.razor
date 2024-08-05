@@ -70,7 +70,6 @@
                     }
                     @* <img class="w-100" src="data:image;base64, @changeMap.ToImage" style="@((changeMap.ZoomIn ?? true) ? "" : "animation: zoomOut 2s;" )" /> *@
                 </div>
-
             </div>
 
         </div>
@@ -163,6 +162,7 @@
 
     private async Task SaveWorld()
     {
+        topWorld.SaveZone();
         var saveJson = System.Text.Json.JsonSerializer.Serialize(topWorld);
         await TriggerDownloadFileFromStream(saveJson);
     }

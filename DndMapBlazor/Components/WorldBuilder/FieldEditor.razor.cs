@@ -24,7 +24,7 @@ public partial class FieldEditor : IDisposable
 
 
     [Parameter]
-    public Field thisField { get; set; }
+    public Field? thisField { get; set; }
 
     bool loading = false;
 
@@ -38,18 +38,18 @@ public partial class FieldEditor : IDisposable
 
     public double gridSizeLength = 4;
 
-    public Timer UpdateMapTimer { get; set; }
+    public Timer? UpdateMapTimer { get; set; }
 
 
     int gridX
     {
         get
         {
-            return thisField.gridX;
+            return thisField!.gridX;
         }
         set
         {
-            thisField.gridX = value;
+            thisField!.gridX = value;
             UpdateGrid();
         }
     }
@@ -58,11 +58,11 @@ public partial class FieldEditor : IDisposable
     {
         get
         {
-            return thisField.offsetXStart;
+            return thisField!.offsetXStart;
         }
         set
         {
-            thisField.offsetXStart = value;
+            thisField!.offsetXStart = value;
             UpdateGrid();
         }
     }
@@ -71,11 +71,11 @@ public partial class FieldEditor : IDisposable
     {
         get
         {
-            return thisField.offsetXEnd;
+            return thisField!.offsetXEnd;
         }
         set
         {
-            thisField.offsetXEnd = value;
+            thisField!.offsetXEnd = value;
             UpdateGrid();
         }
     }
@@ -84,11 +84,11 @@ public partial class FieldEditor : IDisposable
     {
         get
         {
-            return thisField.offsetYStart;
+            return thisField!.offsetYStart;
         }
         set
         {
-            thisField.offsetYStart = value;
+            thisField!.offsetYStart = value;
             UpdateGrid();
         }
     }
@@ -97,11 +97,11 @@ public partial class FieldEditor : IDisposable
     {
         get
         {
-            return thisField.offsetYEnd;
+            return thisField!.offsetYEnd;
         }
         set
         {
-            thisField.offsetYEnd = value;
+            thisField!.offsetYEnd = value;
             UpdateGrid();
         }
     }
@@ -111,12 +111,12 @@ public partial class FieldEditor : IDisposable
 
     private void UpdateGrid()
     {
-        mapWidth = imageWidth - thisField.offsetXStart - thisField.offsetXEnd;
-        mapHeight = imageHeight - thisField.offsetYStart - thisField.offsetYEnd;
+        mapWidth = imageWidth - thisField!.offsetXStart - thisField!.offsetXEnd;
+        mapHeight = imageHeight - thisField!.offsetYStart - thisField!.offsetYEnd;
 
         gridSizeLength = mapWidth / gridX;
 
-        thisField.gridY = (int)(mapHeight / gridSizeLength);
+        thisField!.gridY = (int)(mapHeight / gridSizeLength);
     }
 
     private async void LoadFiles(InputFileChangeEventArgs e)
@@ -125,7 +125,7 @@ public partial class FieldEditor : IDisposable
         await using MemoryStream fs = new MemoryStream();
         await e.File.OpenReadStream(5120000).CopyToAsync(fs);
         byte[] somBytes = await ImageHelper.GetBytes(fs);
-        thisField.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
+        thisField!.mapImage = Convert.ToBase64String(somBytes, 0, somBytes.Length);
         loading = false;
         this.StateHasChanged();
     }
@@ -136,7 +136,7 @@ public partial class FieldEditor : IDisposable
     {
         var newWall = new Wall();
         currentWall = newWall;
-        thisField.Walls.Add(newWall);
+        thisField!.Walls.Add(newWall);
         this.StateHasChanged();
     }
 
@@ -167,6 +167,6 @@ public partial class FieldEditor : IDisposable
 
     public void Dispose()
     {
-        UpdateMapTimer.Dispose();
+        UpdateMapTimer!.Dispose();
     }
 }

@@ -7,7 +7,7 @@
 <div style="width:100%; margin:auto">
     @if (!IsTopLevel)
     {
-        <button @onclick="x => ChangeMapEntityHandler(ThisZone.ParentZone)" class="btn btn-danger backButton" style="z-index:10;position:absolute;top:0px;left:5px;"></button>
+        <button @onclick="x => ChangeMapEntityHandler(ThisZone!.ParentZone)" class="btn btn-danger backButton" style="z-index:10;position:absolute;top:0px;left:5px;"></button>
     }
 
     @if (loading)

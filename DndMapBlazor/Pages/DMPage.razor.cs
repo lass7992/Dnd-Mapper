@@ -1,16 +1,8 @@
-﻿using Blazored.LocalStorage;
-using DndMapBlazor.Helper;
-using DndMapBlazor.Models;
+﻿using DndMapBlazor.Helper;
 using DndMapBlazor.Models.SessionEntites;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.JSInterop;
-using System;
-using System.Data.SqlTypes;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.Json;
+using DndMapBlazor.Components.Bord.DM;
+using Microsoft.AspNetCore.Components;
 
 namespace DndMapBlazor.Pages
 {
@@ -19,7 +11,15 @@ namespace DndMapBlazor.Pages
         private Session session = new Session();
 
         bool loading = false;
+        public EventCallback SessionUpdatedCallBack { get; set; }
 
+        public SessionGameMetaData SessionGameMetaData { get; set; } = new SessionGameMetaData();
+
+        protected override void OnInitialized()
+        {
+            SessionUpdatedCallBack = new EventCallback(this, SessionUpdatedHandler); 
+            base.OnInitialized();
+        }
 
 
         private void AddPlayer() 
@@ -43,6 +43,10 @@ namespace DndMapBlazor.Pages
         }
 
 
+        private void SessionUpdatedHandler(object sender) 
+        {
+            this.StateHasChanged();
+        }
 
         private async Task LoadWorld(InputFileChangeEventArgs e)
         {
@@ -53,7 +57,8 @@ namespace DndMapBlazor.Pages
             var newZone = await SaveLoaderHelper.LoadWorld(e.File.OpenReadStream(5120000));
 
 
-            if (newZone != null) { 
+            if (newZone != null) {
+                newZone.LoadZone();
                 session.World = newZone;
             }
 

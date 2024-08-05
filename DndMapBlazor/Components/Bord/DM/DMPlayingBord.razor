@@ -1,0 +1,23 @@
+﻿@layout Layout.PlayingLayout;
+
+@using DndMapBlazor.Models
+@using DndMapBlazor.Models.SessionEntites
+
+<div style="position:relative">
+    @if (currentMap.ParentZone != null)
+    {
+        <button @onclick="async x => await ChangeMapEvent.InvokeAsync(currentMap!.ParentZone)" class="btn btn-danger backButton" style="z-index:10;position:absolute;top:10px;left:10px;">back</button>
+    }
+
+    <div>
+        @if (currentMap is Zone)
+        {
+            <DmPlayingBordZone thisZone="currentMap as Zone" SessionGameMetaData="sessionGameMetaData" ChangeMapEntity="ChangeMapEvent"></DmPlayingBordZone>
+        }
+        else if(currentMap is Field){
+            <DmPlayingBordField thisField="currentMap as Field" SessionGameMetaData="sessionGameMetaData"></DmPlayingBordField>
+        }
+    </div>
+
+    <img id="ZoneMap" class="w-100" src="data:image;base64, @currentMap!.mapImage" />
+</div>

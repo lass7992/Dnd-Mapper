@@ -1,0 +1,31 @@
+﻿@using DndMapBlazor.Models
+
+
+
+<div style="width:100vw; height:100vh; position:relative">
+    @if (CurrentMap is Zone)
+    {
+        <img id="ZoneMap" class="w-100" src="data:image;base64, @CurrentMap!.mapImage" />
+    }
+    else if (CurrentMap is Field)
+    {
+        <PlayerBordField session="session" CurrentField="CurrentMap as Field" events="events" ></PlayerBordField>
+    }
+
+
+
+@* TransitionImage *@
+@if (RunChangeAnimation && (changeMap.ToImage != null || changeMap.FromImage != null))
+{
+    <div style="position:absolute;top:0;left:0;width:100%">
+        @if (changeMap.ToImage != null)
+        {
+            <img class="w-100" src="data:image;base64, @changeMap.ToImage" style="position:absolute;top:0;left:0; transform-origin: @((changeMap.xPos*100) + "% " + (changeMap.yPos*100)+ "%"); position:absolute;top:0;left:0;transition:normal linear @(mapChangeAnimationTime)s;transform:scale(@(changeMap.ZoomIn ?? true ? "1" : (RunChangeAnimationStart ? "1" : "10"))); " />
+        }
+        @if (changeMap.FromImage != null)
+        {
+            <img class="w-100" src="data:image;base64, @changeMap.FromImage" style="transform-origin: @((changeMap.xPos*100) + "% " + (changeMap.yPos*100)+ "%"); position:absolute;top:0;left:0;transition:normal linear @(mapChangeAnimationTime)s; transform:scale(@(RunChangeAnimationStart && (changeMap.ZoomIn ?? true) ? "10" : "1"));  opacity:@(RunChangeAnimationStart ? "0" : "100")" />
+        }
+    </div>
+}
+</div>

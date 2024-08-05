@@ -1,0 +1,30 @@
+﻿<div class="row">
+    <button @onclick="StartGame" class="btn btn-outline-primary" style="margin: auto; margin-bottom:10px; width:max-content">Start session</button>
+</div>
+
+<div style="background-image:url(https://www.transparenttextures.com/patterns/textured-paper.png);background-size:400px; background-color:black;border-radius:10px;">
+    <div style="border:5px solid black; border-radius:10px; height:80vh; padding:20px; overflow-x:auto; display:flex; width:100%; background-color:rgba(115,82,63,0.8); ">
+        <div style="display:flex; width:90vw;">
+            @* NewTab *@
+            <div class="row" style="position:relative">
+                <button @onclick="OpenUpPlayingTab" class="btn btn-primary" style="margin: auto; margin-bottom:10px; width:max-content">Open player tab</button>
+            </div>
+            <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;" >
+                <input type="number" min="0" @bind-value="sessionGameMetaData.RealWorldScaling" />
+                <button @onclick="SaveMesurmentUnit" class="btn btn-primary">Set length</button>
+            </div>
+
+            @* Camara *@
+            <span> give dimenstion X</span>
+            <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;">
+                <input type="number" min="0" @bind-value="sessionGameMetaData.RealWorldWidth" />
+            </div>
+
+            <span> give dimenstion Y</span>
+            <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;">
+                <input type="number" min="0" @bind-value="sessionGameMetaData.RealWorldHeight" />
+            </div>
+
+        </div>
+    </div>
+</div>

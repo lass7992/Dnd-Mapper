@@ -5,7 +5,7 @@
 @* Draw entities*@
 @if (SessionGameMetaData.imageWidth != 0 && SessionGameMetaData.imageHeight != 0)
 {
-    <div style="width:0px; height:0px;position:relative">
+    <div style="width:0px; height:0px; position:relative">
         @foreach (var entity in thisZone.MapEntities)
         {
             <div class="mapEntity" style="position:absolute;left:@(entity.x*SessionGameMetaData.imageWidth)px;top:@(entity.y*SessionGameMetaData.imageHeight)px;" @onclick="x => ChangeMapEntityHandler(entity)">

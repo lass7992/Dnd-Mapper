@@ -19,7 +19,7 @@ namespace DndMapBlazor.Helper
         public static async Task<(int x, int y)?> GetMapSize(IJSRuntime JS, string ID)
         {
             var newSize = await JS.InvokeAsync<JsXYResult>("GetElementSize", ID);
-            if (newSize.x == null || newSize.y == null || newSize.x == 0 || newSize.y == 0)
+            if (newSize.x == 0 || newSize.y == 0)
             {
                 return null;
             }
