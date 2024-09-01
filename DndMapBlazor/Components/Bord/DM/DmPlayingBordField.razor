@@ -4,10 +4,10 @@
 @using DndMapBlazor.Models.SessionEntites.PlayerBordCommunication
 @using System.Text.Json
 
-@if (SessionGameMetaData.imageWidth != 0 && SessionGameMetaData.imageHeight != 0)
+@if (sessionGameMetaData!.DmImageWidth != 0 && sessionGameMetaData.DmImageHeight != 0)
 {
     <div style="height:0px;">
-        <div style="width:@(SessionGameMetaData.imageWidth)px; height:@(SessionGameMetaData.imageWidth)px;position:relative; padding: @(thisField.offsetYStart * SessionGameMetaData.imageHeight) @(thisField.offsetXEnd * SessionGameMetaData.imageWidth) @(thisField.offsetYEnd * SessionGameMetaData.imageHeight) @(thisField.offsetXStart * SessionGameMetaData.imageWidth)">
+        <div style="width:@(sessionGameMetaData.DmImageWidth)px; height:@(sessionGameMetaData.DmImageHeight)px;position:relative; padding: @(thisField!.offsetYStart * sessionGameMetaData.DmImageHeight) @(thisField.offsetXEnd * sessionGameMetaData.DmImageWidth) @(thisField.offsetYEnd * sessionGameMetaData.DmImageHeight) @(thisField.offsetXStart * sessionGameMetaData.DmImageWidth)">
             <div style="display:grid; width:100%;height:100%; grid-template-columns: repeat(@(thisField.gridX), 1fr);">
                 @for (int y = 0; y < thisField.gridY; y++)
                 {
@@ -17,72 +17,40 @@
                     }
                 }
             </div>
-        </div>
-    </div>
-
-    <div style="border:2px dashed yellow; position:absolute;top:@(startY)%;left:@(startX)%; width:@(playerBordWidth)px;height:@(playerBordHeight)px">
-        <div style="width:100%;height:100%; position:relative">
-            <div draggable="true" @ondragend="Drag" style="background-color:black;width:50px; height:10px; position:absolute; bottom:0px; left:50%; transform:translateX(-50%) translateY(50%)"></div>
-        </div>
-    </div>
-}
-
-
-
-
-@code {
-    [Parameter]
-    public Field? thisField { get; set; }
-
-
-    [Parameter]
-    public SessionGameMetaData? SessionGameMetaData { get; set; }
-
-    [Inject]
-    ILocalStorageService? LocalStorage { get; set; }
-
-    public double startX { get; set; } = 0;
-    public double startY { get; set; } = 0;
-
-    public double playerBordWidth = 300;
-    public double playerBordHeight = 300;
-
-    public double? ClientX;
-    public double? ClientY;
-
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
-
-    private async Task Drag(DragEventArgs args) 
-    {
-        if (!ClientX.HasValue)
-        {
-            ClientX = args.PageX - args.OffsetX;
-            ClientY = args.PageY - args.OffsetY;
-        }
-
-        startX = ((args.PageX - ClientX.Value) / SessionGameMetaData.imageWidth) * 100;
-        startY = ((args.PageY - ClientY.Value) / SessionGameMetaData.imageHeight) * 100;
-        startX = Math.Min(startX, 100);
-        startX = Math.Max(startX, 0);
-        startY = Math.Min(startY, 100);
-        startY = Math.Max(startY, 0);
-
-
-        var data = JsonSerializer.Serialize(new ChangeView(){xStart = startX, yStart = startY });
-
-        // Set new command
-        var command = new GameCommunicationModel()
+            @* Tokens *@
+            @foreach (var token in tokens)
             {
-                state = GameCommunicationState.Running,
-                Command = GameCommunicationCommand.ChangeView,
-                data = data
-            };
+                <div style="border-radius:100%;background: radial-gradient(circle, rgba(255, 255, 255, 1) 50%, rgba(195, 195, 195, 1) 80%); padding:4px; transition: 1s linear; position: absolute; width:@(GridSizeInPX)px; height:@(GridSizeInPX)px; left:@(((double)token.X/(double)thisField.gridX)*100)%; top:@(((double)token.Y/(double)thisField.gridY)*100)%">
+                    <div style="position:relative;border-radius:100%; padding:2px; overflow:hidden; height:100%; width:100%; border: solid black 2px;
+                    @(string.IsNullOrWhiteSpace(token.img) ? "background:white;" : $"background-image: url('data:image;base64, {token!.img}'); background-size:300%; background-position: 50% 10%")                    
+                    ">
+                        <span style="position:absolute; top:-60%; left:50%; transform:translateX(-50%); font-weight:bolder; color:black; text-shadow: 0px 0px 3px greenyellow;"> @token.Name </span>
+                    </div>
+                 </div>
+            }
 
-        await LocalStorage!.SetItemAsync("command", command);
+        </div>
+    </div>
+
+    <div draggable="true" @ondragend="DragView" style="background-color:black;width:50px; height:10px;position:absolute;top:@(Y)%;left:@(X)%; overflow:visible">
+        <div style="border:2px dashed yellow; width:@(playerBordWidth)px;height:@(playerBordHeight)px; position:absolute; bottom:0px; left:50%; transform:translateX(-50%) translateY(-4px); ">
+            <div style="width:100%;height:100%; position:relative">
+            </div>
+        </div>
+    </div>
+
+
+    @if (playerTokenHasBeenSet)
+    {
+        //Camara placement
+        @if (sessionGameMetaData.UseCamara)
+        {
+
+        }
+        // Manuel placement
+        else
+        {
+
+        }
     }
-
 }

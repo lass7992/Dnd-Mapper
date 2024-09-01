@@ -2,6 +2,8 @@
 using static System.Net.Mime.MediaTypeNames;
 using System.Runtime.CompilerServices;
 using Microsoft.JSInterop;
+using DndMapBlazor.Models.SessionEntites.PlayerBordCommunication;
+using System.Reflection.Metadata.Ecma335;
 
 namespace DndMapBlazor.Helper
 {
@@ -27,10 +29,30 @@ namespace DndMapBlazor.Helper
             return (newSize.x, newSize.y);
         }
 
-        private class JsXYResult 
+        public static async Task<WindowsSize?> GetWindowSize(IJSRuntime JS)
+        {
+            var newSize = await JS.InvokeAsync<JsXYResult>("GetWindowSize");
+            if (newSize.x == 0 || newSize.y == 0)
+            {
+                return null;
+            }
+
+            return new WindowsSize() { width = newSize.x, height = newSize.y };
+        }
+
+        
+
+        public class JsXYResult 
         {
             public int x { get; set; }
             public int y { get; set; }
+        }
+
+
+        public class WindowsSize
+        {
+            public int width { get; set; }
+            public int height { get; set; }
         }
     }
 }

@@ -18,11 +18,11 @@ namespace DndMapBlazor.Components.Bord.Player
 
 
         [Parameter]
-        public PlayerBordEventHolder events { get; set; }
+        public PlayerBordEventHolder? events { get; set; }
 
 
         [Parameter]
-        public ChangeView StartsView { get; set; }
+        public ChangeView? StartsView { get; set; }
 
 
         public double xStart { get; set; }
@@ -35,9 +35,9 @@ namespace DndMapBlazor.Components.Bord.Player
 
         protected override void OnInitialized()
         {
-            events.addEntity.callback = new EventCallback<PlayerMapEntity>(this, AddEntityHandler);
-            events.MoveEntity.callback = new EventCallback<MoveEntity>(this, MoveEntityHandler);
-            events.ChangeView.callback = new EventCallback<ChangeView>(this, ChangeViewHandler);
+            events!.addEntity.callback = new EventCallback<PlayerMapEntity>(this, AddEntityHandler);
+            events!.MoveEntity.callback = new EventCallback<MoveEntity>(this, MoveEntityHandler);
+            events!.ChangeView.callback = new EventCallback<ChangeView>(this, ChangeViewHandler);
 
             base.OnInitialized();
         }

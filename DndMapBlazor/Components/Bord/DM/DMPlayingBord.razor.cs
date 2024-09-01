@@ -8,6 +8,7 @@ using DndMapBlazor.Models.WorldBuilderModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Text.Json;
+using static DndMapBlazor.Helper.ImageHelper;
 
 namespace DndMapBlazor.Components.Bord.DM
 {
@@ -18,9 +19,6 @@ namespace DndMapBlazor.Components.Bord.DM
 
         [Inject]
         ILocalStorageService? LocalStorage { get; set; }
-
-        [Parameter]
-        public Session? session { get; set; }
 
         [Parameter]
         public SessionGameMetaData? sessionGameMetaData { get; set; }
@@ -40,7 +38,7 @@ namespace DndMapBlazor.Components.Bord.DM
 
         protected override void OnInitialized()
         {
-            currentMap = session!.World;
+            currentMap = sessionGameMetaData!.session!.World;
 
             UpdateMapTimer = new Timer(async x => await UpdateMapSize(), null, 0, 100);
 
@@ -68,7 +66,11 @@ namespace DndMapBlazor.Components.Bord.DM
             // Set new command
             await CommandNewZone();
 
-            base.OnInitializedAsync();
+            var windowSize = await LocalStorage!.GetItemAsync<WindowsSize>("ClientSize");
+            sessionGameMetaData!.ClientWindowHeight = windowSize!.height;
+            sessionGameMetaData!.ClientWindowWidth = windowSize!.width;
+
+            await base.OnInitializedAsync();
         }
 
 
@@ -81,7 +83,7 @@ namespace DndMapBlazor.Components.Bord.DM
             changeMap.ToImage = entity.mapImage;
 
 
-            if (entity == session!.World || entity == currentMap.ParentZone)
+            if (entity == sessionGameMetaData!.session!.World || entity == currentMap.ParentZone)
             {
                 changeMap.ZoomIn = false;
                 changeMap.xPos = ((currentMap.x + (currentMap.width / 2)));
@@ -107,11 +109,12 @@ namespace DndMapBlazor.Components.Bord.DM
         public async Task UpdateMapSize()
         {
             var newSize = await ImageHelper.GetMapSize(JS!, "ZoneMap");
-            if (newSize.HasValue && (sessionGameMetaData.imageWidth != newSize.Value.x || sessionGameMetaData.imageHeight != newSize.Value.y))
+            if (newSize.HasValue && (sessionGameMetaData!.DmImageWidth != newSize.Value.x || sessionGameMetaData.DmImageHeight != newSize.Value.y))
             {
-                sessionGameMetaData.imageWidth = newSize.Value.x;
-                sessionGameMetaData.imageHeight = newSize.Value.y;
+                sessionGameMetaData.DmImageWidth = newSize.Value.x;
+                sessionGameMetaData.DmImageHeight = newSize.Value.y;
                 this.StateHasChanged();
+                await sessionGameMetaData.UpdatedDataEvent.InvokeAsync();
             }
         }
 
@@ -124,7 +127,7 @@ namespace DndMapBlazor.Components.Bord.DM
 
             }else if (map is Field) 
             {
-                await CommandNewField(map as Field);
+                await CommandNewField((Field)map);
             }
         }
 
@@ -142,7 +145,7 @@ namespace DndMapBlazor.Components.Bord.DM
 
         private async Task CommandNewField(Field field)
         {
-            var data = JsonSerializer.Serialize(new SetField() { Id = field.Id.ToString(), xStart = 0, yStart = 0, xEnd = sessionGameMetaData.RealWorldWidth ?? 100, yEnd = sessionGameMetaData.RealWorldHeight ?? 100 });
+            var data = JsonSerializer.Serialize(new SetField() { Id = field.Id.ToString(), xStart = 0, yStart = 0, xEnd = sessionGameMetaData!.ClientWindowWidth, yEnd = sessionGameMetaData.ClientWindowHeight });
 
             // Set new command
             var command = new GameCommunicationModel()

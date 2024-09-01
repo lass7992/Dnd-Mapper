@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using DndMapBlazor.Helper;
 using DndMapBlazor.Models;
 using DndMapBlazor.Models.SessionEntites;
 using DndMapBlazor.Models.SessionEntites.PlayerBordCommunication;
@@ -6,6 +7,7 @@ using DndMapBlazor.Models.WorldBuilderModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Text.Json;
+using static DndMapBlazor.Helper.ImageHelper;
 
 namespace DndMapBlazor.Pages
 {
@@ -46,7 +48,7 @@ namespace DndMapBlazor.Pages
 
             CommandTimer = new Timer(async x => await UpdateCommand(), null, 0, 300);
 
-            SetUpWorldDict(session.World);
+            SetUpWorldDict(session!.World!);
 
             await base.OnInitializedAsync();
         }
@@ -94,7 +96,7 @@ namespace DndMapBlazor.Pages
                 {
                     var setField = JsonSerializer.Deserialize<SetField>(command.data);
 
-                    var newMap = mapDict!.GetValueOrDefault(setField.Id, null);
+                    var newMap = mapDict!.GetValueOrDefault(setField!.Id, null);
                     await events.changeMapEvent.callback.InvokeAsync(newMap);
                 }
 
@@ -111,15 +113,19 @@ namespace DndMapBlazor.Pages
                 {
                     if (double.TryParse(command.data, out var newMesurment))
                     {
-                        session.MesurmentUnit = newMesurment;
+                        session!.MesurmentUnit = newMesurment;
                     }
                 }
             }
         }
 
-        protected void OpenInFullScreen() 
+        protected async Task OpenInFullScreen() 
         {
-            JS!.InvokeVoidAsync("FullScreen", "view");
+            await JS!.InvokeVoidAsync("FullScreen", "view");
+
+            var size = await ImageHelper.GetWindowSize(JS!);
+            await LocalStorage!.SetItemAsync("ClientSize", size);
+
             isFullScreen = true;
         }
 

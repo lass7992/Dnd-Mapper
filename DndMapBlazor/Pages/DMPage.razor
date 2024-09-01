@@ -4,7 +4,7 @@
 
 <div style="width:100%">
 
-    @if (session.state == Models.SessionEntites.SessionState.setWorld)
+    @if (SessionGameMetaData!.session!.state == Models.SessionEntites.SessionState.setWorld)
     {
         <div class="w-100;" style="text-align:center;margin-top:10px">
             @if (loading)
@@ -18,15 +18,15 @@
             }
         </div>
     }
-    else if (session.state == Models.SessionEntites.SessionState.SetPlayers)
+    else if (SessionGameMetaData!.session!.state == Models.SessionEntites.SessionState.SetPlayers)
     {
         <div class="row">
-            <button disabled="@(session.players.Count==0)" @onclick="x => session.state = Models.SessionEntites.SessionState.Settings" class="btn btn-outline-primary" style="margin: auto; margin-bottom:10px; width:max-content">Continue</button>
+            <button disabled="@(SessionGameMetaData!.session!.players.Count==0)" @onclick="x => SessionGameMetaData!.session!.state = Models.SessionEntites.SessionState.Settings" class="btn btn-outline-primary" style="margin: auto; margin-bottom:10px; width:max-content">Continue</button>
         </div>
         <div style="background-image:url(https://www.transparenttextures.com/patterns/textured-paper.png);background-size:400px; background-color:black;border-radius:10px;">
             <div style="border:5px solid black; border-radius:10px; height:80vh; padding:20px; overflow-x:auto; display:flex; width:100%; background-color:rgba(115,82,63,0.8); ">
                 <div style="display:flex; width:90vw;">
-                    @foreach (var player in session.players)
+                    @foreach (var player in SessionGameMetaData!.session!.players)
                     {
                         <div class="col playerSheet">
                             <div style="aspect-ratio:1; margin:10px; border:1px solid black;overflow:hidden;background-color:lavender;">
@@ -54,13 +54,13 @@
             </div>
         </div>
     }
-    else if(session.state == Models.SessionEntites.SessionState.Settings)
+    else if (SessionGameMetaData!.session!.state == Models.SessionEntites.SessionState.Settings)
     {
-        <DmSettings session="session" sessionGameMetaData="SessionGameMetaData" SessionUpdatedCallBack="SessionUpdatedCallBack"/>
+        <DmSettings sessionGameMetaData="SessionGameMetaData" SessionUpdatedCallBack="SessionUpdatedCallBack"/>
     }
-    else if (session.state == Models.SessionEntites.SessionState.Running)    
+    else if (SessionGameMetaData!.session!.state == Models.SessionEntites.SessionState.Running)
     {
-        <DMPlayingBord sessionGameMetaData="SessionGameMetaData" session="session"></DMPlayingBord>
+        <DMPlayingBord sessionGameMetaData="SessionGameMetaData" ></DMPlayingBord>
     }
 
 </div>

@@ -36,8 +36,8 @@ namespace DndMapBlazor.Models
         }
         public void SaveZone() 
         {
-            zones = MapEntities.Where(x => x is Zone).Select(x => x as Zone).ToList();
-            fields = MapEntities.Where(x => x is Field).Select(x => x as Field).ToList();
+            zones = MapEntities.Where(x => x is Zone).Select(x => (Zone)x).ToList();
+            fields = MapEntities.Where(x => x is Field).Select(x => (Field)x).ToList();
             foreach (var zone in zones)
             {
                 zone.SaveZone();

@@ -7,7 +7,7 @@
     @if (!isFullScreen)
     {
         <div class="row">
-            <button @onclick="OpenInFullScreen" class="btn btn-outline-primary" style="margin: auto; margin-bottom:10px; width:max-content">FullScreen</button>
+            <button @onclick="async x => await OpenInFullScreen()" class="btn btn-outline-primary" style="margin: auto; margin-bottom:10px; width:max-content">FullScreen</button>
         </div>
     }
     else if (command!.state == GameCommunicationState.Settings) 

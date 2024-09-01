@@ -15,20 +15,18 @@ namespace DndMapBlazor.Components.Bord.DM
         IJSRuntime? JS { get; set; }
 
         [Parameter]
-        public Session? session { get; set; }
-
-        [Parameter]
         public EventCallback<bool> SessionUpdatedCallBack { get; set; }
 
         [Parameter]
         public SessionGameMetaData? sessionGameMetaData { get; set; }
 
-
         public bool TabOpened { get; set; }
+
+        public string Img { get; set; }
 
         public async Task OpenUpPlayingTab()
         {
-            await LocalStorage!.SetItemAsync("Session", session!);
+            await LocalStorage!.SetItemAsync("Session", sessionGameMetaData!.session!);
 
             var command = new GameCommunicationModel()
             {
@@ -45,9 +43,9 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public async Task SaveMesurmentUnit()
         {
-            session.MesurmentUnit = (100/sessionGameMetaData.RealWorldScaling);
+            sessionGameMetaData!.session!.MesurmentUnit = (100/sessionGameMetaData!.RealWorldScaling);
 
-            NewCommand(Models.SessionEntites.GameCommunicationCommand.GiveMesurments, session.MesurmentUnit.ToString());
+            await NewCommand(Models.SessionEntites.GameCommunicationCommand.GiveMesurments, sessionGameMetaData!.session.MesurmentUnit.ToString());
         }
 
         public async Task NewCommand(GameCommunicationCommand command, string? data = null)
@@ -63,9 +61,20 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public async void StartGame() 
         {
-            session!.state = SessionState.Running;
+            sessionGameMetaData!.session!.state = SessionState.Running;
             await SessionUpdatedCallBack.InvokeAsync();
             this.StateHasChanged();
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await JS!.InvokeVoidAsync("startVideo", "videoFeed");
+        }
+
+        private async Task CaptureFrame()
+        {
+            Img = await JS!.InvokeAsync<String>("getFrame", "videoFeed", "currentFrame");
+            StateHasChanged();
         }
     }
 }

@@ -1,37 +1,36 @@
 ﻿@font-face {
     font-family: 'FantasyFont1';
-    src: url('../fonts/Royal2-MOXe.ttf') format('truetype');
+    src: url('/fonts/Royal2-MOXe.ttf') format('truetype'), url('https://dndtester.azurewebsites.net/fonts/Royal2-MOXe.ttf') format('truetype');
 }
+
 
 @font-face {
     font-family: 'FantasyFont2';
-    src: url('../fonts/BarazhadItalic-geyR.ttf') format('truetype');
+    src: url('/fonts/BarazhadItalic-geyR.ttf') format('truetype'), url('https://dndtester.azurewebsites.net/fonts/BarazhadItalic-geyR.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'FantasyFont3';
-    src: url('../fonts/Elminster-Kpve.ttf') format('truetype');
+    src: url('/fonts/Elminster-Kpve.ttf') format('truetype'), url('https://dndtester.azurewebsites.net/fonts/Elminster-Kpve.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'FantasyFont4';
-    src: url('../fonts/MoriaCitadel.TTF') format('truetype') ;
+    src: url('/fonts/MoriaCitadel.TTF') format('truetype'), url('https://dndtester.azurewebsites.net/fonts/MoriaCitadel.TTF') format('truetype');
 }
 
 @font-face {
     font-family: 'FantasyFont5';
-    src: url('../fonts/FirstReignPersonalUseOnlyRegular-gxnD1.otf') format('opentype');
+    src: url('/fonts/FirstReignPersonalUseOnlyRegular-gxnD1.otf') format('opentype'), url('https://dndtester.azurewebsites.net/fonts/FirstReignPersonalUseOnlyRegular-gxnD1.otf') format('opentype');
 }
 @font-face {
     font-family: 'FantasyFont51';
-    src: url('../fonts/FirstReignPersonalUseOnlyBorder-0WyK9.otf') format('opentype');
+    src: url('/fonts/FirstReignPersonalUseOnlyBorder-0WyK9.otf') format('opentype'), url('https://dndtester.azurewebsites.net/fonts/FirstReignPersonalUseOnlyBorder-0WyK9.otf') format('opentype');
 }
-
-
 
 @font-face {
     font-family: 'FantasyFont6';
-    src: url('../fonts/Rellanic-Agx7.ttf') format('truetype');
+    src: url('/fonts/Rellanic-Agx7.ttf') format('truetype'), url('https://dndtester.azurewebsites.net/fonts/Rellanic-Agx7.ttf') format('truetype');
 }
 
 

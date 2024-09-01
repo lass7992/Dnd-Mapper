@@ -10,19 +10,30 @@
                 <button @onclick="OpenUpPlayingTab" class="btn btn-primary" style="margin: auto; margin-bottom:10px; width:max-content">Open player tab</button>
             </div>
             <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;" >
-                <input type="number" min="0" @bind-value="sessionGameMetaData.RealWorldScaling" />
+                <input type="number" min="0" @bind-value="sessionGameMetaData!.RealWorldScaling" />
                 <button @onclick="SaveMesurmentUnit" class="btn btn-primary">Set length</button>
             </div>
 
             @* Camara *@
+            <input type="checkbox" @bind-value="@sessionGameMetaData.UseCamara"/>
+
+            @if (sessionGameMetaData.UseCamara)
+            {
+                <div>
+                    <video id="videoFeed" width="320" height="240" /><canvas class="d-none" id="currentFrame" width="320" height="240" /><br />
+                    <button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button> <br />
+                    <img id="img" class="w-100" src="@Img" />
+                </div>
+            }
+
             <span> give dimenstion X</span>
             <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;">
-                <input type="number" min="0" @bind-value="sessionGameMetaData.RealWorldWidth" />
+                <input type="number" min="0" @bind-value="sessionGameMetaData.CamaraRealWorldWidth" />
             </div>
 
             <span> give dimenstion Y</span>
             <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;">
-                <input type="number" min="0" @bind-value="sessionGameMetaData.RealWorldHeight" />
+                <input type="number" min="0" @bind-value="sessionGameMetaData.CamaraRealWorldHeight" />
             </div>
 
         </div>

@@ -15,7 +15,7 @@ namespace DndMapBlazor.Components.Bord.Player
         public Session? session { get; set; }
 
         [Parameter]
-        public PlayerBordEventHolder events { get; set; }
+        public PlayerBordEventHolder? events { get; set; }
 
         public WorldMapEntity? CurrentMap { get; set; }
 
@@ -27,7 +27,7 @@ namespace DndMapBlazor.Components.Bord.Player
         public double mapChangeAnimationTime { get; set; } = 0.8;
 
         //FieldEvents
-        public ChangeView StartsView { get; set; }
+        public ChangeView? StartsView { get; set; }
 
 
         protected override void OnInitialized()
@@ -49,18 +49,18 @@ namespace DndMapBlazor.Components.Bord.Player
             };
 
             CurrentMap = session!.World;
-            events.changeMapEvent.callback = new EventCallback<WorldMapEntity>(this, ChangeMapHandler);
+            events!.changeMapEvent.callback = new EventCallback<WorldMapEntity>(this, ChangeMapHandler);
 
             base.OnInitialized();
         }
 
         private void ChangeMapHandler(WorldMapEntity entity) 
         {
-            changeMap.FromImage = CurrentMap.mapImage;
+            changeMap.FromImage = CurrentMap!.mapImage;
             changeMap.ToImage = entity.mapImage;
 
 
-            if (entity == session.World || entity == CurrentMap.ParentZone)
+            if (entity == session!.World || entity == CurrentMap.ParentZone)
             {
                 changeMap.ZoomIn = false;
                 changeMap.xPos = ((CurrentMap.x + (CurrentMap.width / 2)));

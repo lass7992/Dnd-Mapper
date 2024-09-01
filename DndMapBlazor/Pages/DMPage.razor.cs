@@ -8,8 +8,6 @@ namespace DndMapBlazor.Pages
 {
     public partial class DMPage
     {
-        private Session session = new Session();
-
         bool loading = false;
         public EventCallback SessionUpdatedCallBack { get; set; }
 
@@ -24,12 +22,12 @@ namespace DndMapBlazor.Pages
 
         private void AddPlayer() 
         {
-            session.players.Add(new Player());
+            SessionGameMetaData!.session!.players.Add(new Player());
         }
 
         private void RemovePlayer(Player pl)
         {
-            session.players.Remove(pl);
+            SessionGameMetaData!.session!.players.Remove(pl);
         }
         private async void AddPlayerImage(InputFileChangeEventArgs e, Player pl)
         {
@@ -59,11 +57,11 @@ namespace DndMapBlazor.Pages
 
             if (newZone != null) {
                 newZone.LoadZone();
-                session.World = newZone;
+                SessionGameMetaData!.session!.World = newZone;
             }
 
             loading = false;
-            session.state = SessionState.SetPlayers;
+            SessionGameMetaData!.session!.state = SessionState.SetPlayers;
             this.StateHasChanged();
         }
     }

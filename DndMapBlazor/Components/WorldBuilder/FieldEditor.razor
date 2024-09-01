@@ -10,7 +10,7 @@
 else
 {
 
-    @if (thisField.mapImage == null)
+    @if (thisField!.mapImage == null)
     {
         <div class="w-100;" style="text-align:center;">
             <InputFile OnChange="LoadFiles" />
