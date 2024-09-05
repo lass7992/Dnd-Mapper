@@ -2,6 +2,7 @@
 using DndMapBlazor.Helper;
 using DndMapBlazor.Models;
 using DndMapBlazor.Models.SessionEntites;
+using DndMapBlazor.Models.SessionEntites.PlayerBord;
 using DndMapBlazor.Models.SessionEntites.PlayerBordCommunication;
 using DndMapBlazor.Models.WorldBuilderModels;
 using Microsoft.AspNetCore.Components;
@@ -92,7 +93,7 @@ namespace DndMapBlazor.Pages
                 }
 
                 // Change Map Not used right now
-                if (command.Command is GameCommunicationCommand.SetField)
+                else if (command.Command is GameCommunicationCommand.SetField)
                 {
                     var setField = JsonSerializer.Deserialize<SetField>(command.data);
 
@@ -100,10 +101,15 @@ namespace DndMapBlazor.Pages
                     await events.changeMapEvent.callback.InvokeAsync(newMap);
                 }
 
-                if (command.Command is GameCommunicationCommand.ChangeView)
+                else if (command.Command is GameCommunicationCommand.ChangeView)
                 {
                     var newView = JsonSerializer.Deserialize<ChangeView>(command.data);
                     await events.ChangeView.callback.InvokeAsync(newView);
+                }
+                else if (command.Command is GameCommunicationCommand.UpdateToken)
+                {
+                    var newToken = JsonSerializer.Deserialize<PlayerBordToken>(command.data);
+                    await events.UpdateToken.callback.InvokeAsync(newToken);
                 }
 
             }

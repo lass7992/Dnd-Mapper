@@ -25,6 +25,7 @@
         SetZone,
         SetField,
         ChangeView,
-            
+        UpdateToken,
+
     }
 }

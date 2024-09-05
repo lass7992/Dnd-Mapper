@@ -10,6 +10,7 @@ namespace DndMapBlazor.Models.SessionEntites
         public EventHolder<MoveEntity> MoveEntity { get; set; } = new EventHolder<MoveEntity>();
         public EventHolder<ChangeView> ChangeView { get; set; } = new EventHolder<ChangeView>();
         public EventHolder<WorldMapEntity> changeMapEvent { get; set; } = new EventHolder<WorldMapEntity>();
+        public EventHolder<PlayerBordToken> UpdateToken { get; set; } = new EventHolder<PlayerBordToken>();
         
     }
 }

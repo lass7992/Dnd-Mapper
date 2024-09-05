@@ -24,6 +24,10 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public string Img { get; set; }
 
+        private bool CamaraModalOpen { get; set; }
+
+
+
         public async Task OpenUpPlayingTab()
         {
             await LocalStorage!.SetItemAsync("Session", sessionGameMetaData!.session!);
@@ -75,6 +79,11 @@ namespace DndMapBlazor.Components.Bord.DM
         {
             Img = await JS!.InvokeAsync<String>("getFrame", "videoFeed", "currentFrame");
             StateHasChanged();
+        }
+
+        public void OnCloseCamaraModal()
+        {
+            CamaraModalOpen = false;
         }
     }
 }

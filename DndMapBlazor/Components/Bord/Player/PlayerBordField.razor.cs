@@ -5,11 +5,15 @@ using DndMapBlazor.Models.SessionEntites.PlayerBord;
 using DndMapBlazor.Models.SessionEntites.PlayerBordCommunication;
 using DndMapBlazor.Models.WorldBuilderModels;
 using System.Diagnostics.Tracing;
+using Microsoft.JSInterop;
 
 namespace DndMapBlazor.Components.Bord.Player
 {
     public partial class PlayerBordField
     {
+        [Inject]
+        IJSRuntime? JS { get; set; }
+
         [Parameter]
         public Session? session { get; set; }
 
@@ -33,15 +37,49 @@ namespace DndMapBlazor.Components.Bord.Player
 
         public Dictionary<Guid, PlayerMapEntity> mapEntities { get; set; } = new Dictionary<Guid, PlayerMapEntity>();
 
+
+        public double GridSizeInPX { get; set; }
+
+        public List<PlayerBordToken> tokens { get; set; } = new List<PlayerBordToken>();
+
+
         protected override void OnInitialized()
         {
             events!.addEntity.callback = new EventCallback<PlayerMapEntity>(this, AddEntityHandler);
             events!.MoveEntity.callback = new EventCallback<MoveEntity>(this, MoveEntityHandler);
             events!.ChangeView.callback = new EventCallback<ChangeView>(this, ChangeViewHandler);
-
+            events!.UpdateToken.callback = new EventCallback<PlayerBordToken>(this, UpdateToken);
             base.OnInitialized();
         }
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                var size = await Helper.ImageHelper.GetElementSize(JS!, "Grid");
+                if (size.HasValue)
+                {
+                    GridSizeInPX = size.Value.x / CurrentField!.gridX;
+                }
+            }
 
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+
+        private void UpdateToken(PlayerBordToken token) 
+        {
+            var foundToken = tokens.Find(x => x.id == token.id);
+            if (foundToken != null) 
+            {
+                foundToken.X = token.X;
+                foundToken.Y = token.Y;
+            }
+            else { 
+                tokens.Add(token);
+            }
+
+            StateHasChanged();
+        }
 
         private void AddEntityHandler(PlayerMapEntity entity) 
         {

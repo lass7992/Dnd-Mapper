@@ -1,4 +1,4 @@
-﻿window.GetElementSize = (elementId) => {
+﻿window.GetElementClientSize = (elementId) => {
     var element = document.getElementById(elementId);
     if (element == undefined)
     {
@@ -10,6 +10,19 @@
         y: element.height
     };
 };
+
+window.GetElementSize = (elementId) => {
+    var element = document.getElementById(elementId);
+    if (element == undefined) {
+        return { x: 0, y: 0 };
+    }
+
+    return {
+        x: element.clientWidth,
+        y: element.clientHeight
+    };
+};
+
 
 async function downloadFileFromStream(fileName, contentStreamReference)
 {
@@ -72,4 +85,25 @@ function getFrame(src, dest) {
 
     let dataUrl = canvas.toDataURL("image/jpeg");
     return dataUrl;
+}
+
+
+function SetDragImage(dragEvent)
+{
+    elem = document.getElementById("EmptyDragImage")    
+    
+    dragEvent.dataTransfer.setDragImage(elem, 0, 0);
+}
+
+function OnDrag(dragEvent) {
+    elem = document.getElementById("PlayerViewImage")
+    elem.style.left = dragEvent.clientX + 'px'
+    elem.style.top = dragEvent.clientY + 'px'
+    if (dragEvent.pageX == 0 || dragEvent.pageY == 0)
+    {
+        elem.style.top = '-1000px'
+    }
+
+    dragEvent.preventDefault()
+    return;
 }

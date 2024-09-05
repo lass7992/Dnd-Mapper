@@ -34,6 +34,7 @@ namespace DndMapBlazor.Components.Bord.DM
         public double? ClientY;
 
         public bool playerTokenHasBeenSet { get; set; } = false;
+
         public List<PlayerBordToken> tokens { get; set; } = new List<PlayerBordToken>();
 
         public double GridSizeInPX {get;set;}
@@ -85,6 +86,24 @@ namespace DndMapBlazor.Components.Bord.DM
                 startX = X;
                 startY = Y;
             }
+        }
+
+        private async Task DragToken(DragEventArgs args, PlayerBordToken token)
+        {
+            token.X += (int)Math.Round(args.OffsetX / GridSizeInPX);
+            token.Y += (int)Math.Round(args.OffsetY / GridSizeInPX);
+
+            var data = JsonSerializer.Serialize(token);
+
+            // Set new command
+            var command = new GameCommunicationModel()
+            {
+                state = GameCommunicationState.Running,
+                Command = GameCommunicationCommand.UpdateToken,
+                data = data
+            };
+
+            await LocalStorage!.SetItemAsync("command", command);
         }
 
         private async Task DragView(DragEventArgs args)
