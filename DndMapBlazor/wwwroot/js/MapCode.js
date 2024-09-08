@@ -87,31 +87,91 @@ function getFrame(src, dest) {
     return dataUrl;
 }
 
-function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4 ) {
+function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4) {
     let gridX = 10;
-    let gridY = 7;
+    let gridY = 10;
 
     let video = document.getElementById(src);
     let canvas = document.getElementById(dest);
-
     let ctx = canvas.getContext('2d');
-    const imgData = ctx.createImageData(16 * gridX, 16 * gridY);
+
+    ctx.drawImage(video, 0, 0, 320, 240);
+    let pixels = ctx.getImageData(0, 0, 320, 240).data;
+    ctx.fillRect(0, 0, 320, 240)
+
+    let NewWidth = 24 * gridX;
+    let NewHeight = 24 * gridY;
+
+    const imgData = ctx.createImageData(NewWidth, NewHeight);
 
     // Implement thins.
+    let XCounter = 0;
+    let YCounter = 0;
+
+    let XWrapedWidthTop = x2 - x1; 
+    let XWrapedWidthBottom = x3 - x4;
+    let XWrapedDiff = XWrapedWidthBottom - XWrapedWidthTop;
+    let YWrapedHeightLeft = y4 - y1;
+    let YWrapedHeightRight = y3 - y2;
+    let YWrapedDiff = YWrapedHeightRight - YWrapedHeightLeft;
+
+    let CurrentWidth = XWrapedWidthTop + XWrapedDiff * ((YCounter) / NewHeight);
+    let CurrentPixelWidth = CurrentWidth / NewWidth;
+
     for (let i = 0; i < imgData.data.length; i += 4) {
+        let CurrentHeight = YWrapedHeightLeft + YWrapedDiff * ((XCounter) / NewWidth);
+        let CurrentPixelHeight = CurrentHeight / NewHeight;
 
-        imgData.data[i + 0] = 255;
-        imgData.data[i + 1] = 0;
-        imgData.data[i + 2] = 0;
+
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+
+        //Cal color of pixel
+        XStart = x1 + XCounter * CurrentPixelWidth;
+        XStart = Math.round(XStart)
+        YStart = y1 + YCounter * CurrentPixelHeight;
+        YStart = Math.round(YStart)
+
+        let PixelSize = 0;
+        for (let tempX = 0; tempX < Math.round(CurrentPixelWidth); tempX++) {
+            for (let tempY = 0; tempY < Math.round(CurrentPixelHeight); tempY++) {
+                let PixelIndex = Math.round((XStart + tempX + (YStart+tempY) * 320) * 4)
+                let h = pixels[PixelIndex];
+
+                red += pixels[PixelIndex];
+                green += pixels[PixelIndex + 1];
+                blue += pixels[PixelIndex + 2];
+                PixelSize++;
+            }
+        }
+
+        if (PixelSize > 0) {
+            red /= PixelSize;
+            green /= PixelSize;
+            blue /= PixelSize;
+        } else {
+            let h = "asd";
+            h = "asd";
+        }
+
+
+
+        imgData.data[i + 0] = Math.round(red);
+        imgData.data[i + 1] = Math.round(green);
+        imgData.data[i + 2] = Math.round(blue);
         imgData.data[i + 3] = 255;
+
+        XCounter++;
+        if (XCounter >= NewWidth)
+        {
+            XCounter = 0;
+            YCounter++;
+            CurrentWidth = XWrapedWidthTop + XWrapedDiff * ((YCounter) / NewHeight);
+            CurrentPixelWidth = CurrentWidth / NewWidth;
+        }
     }
-
-
-    ctx.fillRect(0, 0, 320, 240);
-    ctx.save();
-    ctx.transform(scaleX, skewX, skewY , scaleY, 0, 0);
-    ctx.drawImage(video, 0, 0, 320, 240);
-    ctx.restore();
+    ctx.putImageData(imgData, 0, 0);
 
     let dataUrl = canvas.toDataURL("image/jpeg");
     return dataUrl;

@@ -92,7 +92,7 @@ namespace DndMapBlazor.Components.Bord.DM
 
         private async Task WarpImg()
         {
-            Img = await JS!.InvokeAsync<String>("getWarpedFrame", "videoFeed", "currentFrame", 100,100, 320,0 , 320, 240,  0, 320);
+            Img = await JS!.InvokeAsync<String>("getWarpedFrame", "videoFeed", "currentFrame", 100,100, 320,0 , 320, 240,  0, 240);
             StateHasChanged();
         }
 
