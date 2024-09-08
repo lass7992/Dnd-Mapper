@@ -27,6 +27,8 @@ namespace DndMapBlazor.Components.Bord.DM
 
         private bool CamaraModalOpen { get; set; }
 
+        double skewX = 0, skewY = 0,scalX = 1,scalY = 1;
+
 
 
         public async Task OpenUpPlayingTab()
@@ -87,10 +89,16 @@ namespace DndMapBlazor.Components.Bord.DM
             StateHasChanged();
         }
 
+
         private async Task WarpImg()
         {
-            string imgBase64 = Img.Substring(Img.IndexOf("base64,")+7);
+            Img = await JS!.InvokeAsync<String>("getWarpedFrame", "videoFeed", "currentFrame", 100,100, 320,0 , 320, 240,  0, 320);
+            StateHasChanged();
+        }
 
+        private async Task WarpImg2()
+        {
+            string imgBase64 = Img.Substring(Img.IndexOf("base64,")+7);
             Img = "data:image/jpeg;base64," + WarpImgFunc(imgBase64);
             StateHasChanged();
         }

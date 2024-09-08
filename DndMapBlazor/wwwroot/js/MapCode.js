@@ -87,6 +87,36 @@ function getFrame(src, dest) {
     return dataUrl;
 }
 
+function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4 ) {
+    let gridX = 10;
+    let gridY = 7;
+
+    let video = document.getElementById(src);
+    let canvas = document.getElementById(dest);
+
+    let ctx = canvas.getContext('2d');
+    const imgData = ctx.createImageData(16 * gridX, 16 * gridY);
+
+    // Implement thins.
+    for (let i = 0; i < imgData.data.length; i += 4) {
+
+        imgData.data[i + 0] = 255;
+        imgData.data[i + 1] = 0;
+        imgData.data[i + 2] = 0;
+        imgData.data[i + 3] = 255;
+    }
+
+
+    ctx.fillRect(0, 0, 320, 240);
+    ctx.save();
+    ctx.transform(scaleX, skewX, skewY , scaleY, 0, 0);
+    ctx.drawImage(video, 0, 0, 320, 240);
+    ctx.restore();
+
+    let dataUrl = canvas.toDataURL("image/jpeg");
+    return dataUrl;
+}
+
 
 function SetDragImage(dragEvent)
 {

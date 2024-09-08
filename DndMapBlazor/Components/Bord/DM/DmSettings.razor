@@ -41,6 +41,11 @@
                 <video id="videoFeed" width="320" height="240" /><canvas class="d-none" id="currentFrame" width="320" height="240" /><br />
                 <img id="img" style="width:320px" src="@Img" />
             </div>
+            <input type="range" min="-1" max="1" step="0.1" @bind-value="skewX" /> <br />
+            <input type="range" min="-1" max="1" step="0.1" @bind-value="skewY" /><br />
+            <input type="range" min="0" max="2" step="0.1" @bind-value="scalX" /><br />
+            <input type="range" min="0" max="2" step="0.1" @bind-value="scalY" /><br />
+
             <button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button> <br />
             <button class="btn btn-primary mb-3" @onclick="WarpImg">Warp</button> <br />
         </div>
