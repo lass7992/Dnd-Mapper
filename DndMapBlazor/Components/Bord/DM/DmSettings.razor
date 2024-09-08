@@ -20,15 +20,6 @@
             @* Camara *@
             <input type="checkbox" value="@sessionGameMetaData.UseCamara" @onchange="x => {sessionGameMetaData.UseCamara = (bool)x.Value; CamaraModalOpen = true;} " />
 
-            @if (sessionGameMetaData.UseCamara)
-            {
-                <div>
-                    <video id="videoFeed" width="320" height="240" /><canvas class="d-none" id="currentFrame" width="320" height="240" /><br />
-                    <button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button> <br />
-                    <img id="img" class="w-100" src="@Img" />
-                </div>
-            }
-
             <span> give dimenstion X</span>
             <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;">
                 <input type="number" min="0" @bind-value="sessionGameMetaData.CamaraRealWorldWidth" />
@@ -41,4 +32,18 @@
 
         </div>
     </div>
+</div>
+
+<div id="CamaraModal" class="modal" style="display:@(CamaraModalOpen ? "block" : "none" )">
+  <div class="modal-content">
+        <div>
+            <div style="display:flex">
+                <video id="videoFeed" width="320" height="240" /><canvas class="d-none" id="currentFrame" width="320" height="240" /><br />
+                <img id="img" style="width:320px" src="@Img" />
+            </div>
+            <button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button> <br />
+            <button class="btn btn-primary mb-3" @onclick="WarpImg">Warp</button> <br />
+        </div>
+    <button @onclick="x => CamaraModalOpen = false"> Close </button>
+  </div>
 </div>

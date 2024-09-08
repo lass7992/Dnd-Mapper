@@ -1,8 +1,9 @@
 ﻿using Blazored.LocalStorage;
-using DndMapBlazor.Models;
 using DndMapBlazor.Models.SessionEntites;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace DndMapBlazor.Components.Bord.DM
 {
@@ -75,15 +76,47 @@ namespace DndMapBlazor.Components.Bord.DM
             await JS!.InvokeVoidAsync("startVideo", "videoFeed");
         }
 
+        public void OnCloseCamaraModal()
+        {
+            CamaraModalOpen = false;
+        }
+
         private async Task CaptureFrame()
         {
             Img = await JS!.InvokeAsync<String>("getFrame", "videoFeed", "currentFrame");
             StateHasChanged();
         }
 
-        public void OnCloseCamaraModal()
+        private async Task WarpImg()
         {
-            CamaraModalOpen = false;
+            string imgBase64 = Img.Substring(Img.IndexOf("base64,")+7);
+
+            Img = "data:image/jpeg;base64," + WarpImgFunc(imgBase64);
+            StateHasChanged();
         }
+
+        public string WarpImgFunc(string base64String)
+        {
+            int GridX = 10;
+            int GridY = 7;
+            int Width = GridX * 16;
+            int Heigh = GridY * 16;
+
+            // Convert base 64 string to byte[]
+            byte[] imageBytes = Convert.FromBase64String(base64String);
+            // Convert byte[] to Image
+            using var ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
+            Bitmap.FromStream(ms, false);
+            Image image = Image.FromStream(ms);
+
+            var newImg = Graphics.FromImage(image);
+            newImg.Transform.TransformPoints(new Point[] { new Point(100, 100), new Point(200, 100), new Point(200, 200), new Point(100, 200) });
+
+            ms.Position = 0;
+            image.Save(ms, ImageFormat.Jpeg);
+
+            return Convert.ToBase64String(ms.ToArray());
+        }
+
     }
 }
