@@ -1,9 +1,12 @@
 ﻿using Blazored.LocalStorage;
 using DndMapBlazor.Models.SessionEntites;
+using DndMapBlazor.Models.SessionEntites.PlayerBordCommunication;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Text.Json;
 
 namespace DndMapBlazor.Components.Bord.DM
 {
@@ -25,9 +28,13 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public string Img { get; set; }
 
+        public string ImgWrapped { get; set; }
+
         private bool CamaraModalOpen { get; set; }
 
         double skewX = 0, skewY = 0,scalX = 1,scalY = 1;
+
+        (double x, double y)[] points { get; set; } = new (double x, double y)[] { new(0, 0), new(200, 0), new(200, 200), new(0, 200) };
 
 
 
@@ -92,39 +99,14 @@ namespace DndMapBlazor.Components.Bord.DM
 
         private async Task WarpImg()
         {
-            Img = await JS!.InvokeAsync<String>("getWarpedFrame", "videoFeed", "currentFrame", 100,100, 320,0 , 320, 240,  0, 240);
+            ImgWrapped = await JS!.InvokeAsync<String>("getWarpedFrame", "videoFeed", "currentFrame", points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y, points[3].x, points[3].y);
             StateHasChanged();
         }
 
-        private async Task WarpImg2()
+        private async Task DragPoint(DragEventArgs args, int id)
         {
-            string imgBase64 = Img.Substring(Img.IndexOf("base64,")+7);
-            Img = "data:image/jpeg;base64," + WarpImgFunc(imgBase64);
-            StateHasChanged();
+            points[id].x += args.OffsetX;
+            points[id].y += args.OffsetY;
         }
-
-        public string WarpImgFunc(string base64String)
-        {
-            int GridX = 10;
-            int GridY = 7;
-            int Width = GridX * 16;
-            int Heigh = GridY * 16;
-
-            // Convert base 64 string to byte[]
-            byte[] imageBytes = Convert.FromBase64String(base64String);
-            // Convert byte[] to Image
-            using var ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
-            Bitmap.FromStream(ms, false);
-            Image image = Image.FromStream(ms);
-
-            var newImg = Graphics.FromImage(image);
-            newImg.Transform.TransformPoints(new Point[] { new Point(100, 100), new Point(200, 100), new Point(200, 200), new Point(100, 200) });
-
-            ms.Position = 0;
-            image.Save(ms, ImageFormat.Jpeg);
-
-            return Convert.ToBase64String(ms.ToArray());
-        }
-
     }
 }

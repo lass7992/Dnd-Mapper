@@ -39,12 +39,31 @@
         <div>
             <div style="display:flex">
                 <video id="videoFeed" width="320" height="240" /><canvas class="d-none" id="currentFrame" width="320" height="240" /><br />
-                <img id="img" style="width:320px" src="@Img" />
+                <div style="position:relative">
+                    <img id="img" style="width:320px" src="@Img" />
+                    <svg style="position:absolute;left:0;top:0;" stroke-linejoin="round" width="320px" height="240px">
+                            <polyline stroke-linejoin="round" points="@points.Select(p => p.x + "," + p.y).Aggregate((x,y) => x + " " + y) @(points[0].x + "," + points[0].y)" stroke="black" stroke-width="1" fill="none" />
+                    </svg>                    
+                    <div draggable="true" @ondragend="x => DragPoint(x,0)" style="border:3px solid red;position:absolute; width:1px; height:4px; left:@(points[0].x)px; top:@(points[0].y)px"></div>
+                    <div draggable="true" @ondragend="x => DragPoint(x,1)" style="border:3px solid red;position:absolute; width:1px; height:4px; left:@(points[1].x)px; top:@(points[1].y)px"></div>
+                    <div draggable="true" @ondragend="x => DragPoint(x,2)" style="border:3px solid red;position:absolute; width:1px; height:4px; left:@(points[2].x)px; top:@(points[2].y)px"></div>
+                    <div draggable="true" @ondragend="x => DragPoint(x,3)" style="border:3px solid red;position:absolute; width:1px; height:4px; left:@(points[3].x)px; top:@(points[3].y)px"></div>
+                </div>
+                <img id="img" style="width:320px" src="@ImgWrapped" />
+
             </div>
-            <input type="range" min="-1" max="1" step="0.1" @bind-value="skewX" /> <br />
-            <input type="range" min="-1" max="1" step="0.1" @bind-value="skewY" /><br />
-            <input type="range" min="0" max="2" step="0.1" @bind-value="scalX" /><br />
-            <input type="range" min="0" max="2" step="0.1" @bind-value="scalY" /><br />
+            <input style="width:200px" type="range" min="0" max="320" step="1" @bind-value="points[0].x" />
+            <input style="width:200px" type="range" min="0" max="240" step="1" @bind-value="points[0].y" /> <br />
+
+            <input style="width:200px" type="range" min="0" max="320" step="1" @bind-value="points[1].x" />
+            <input style="width:200px" type="range" min="0" max="240" step="1" @bind-value="points[1].y" /> <br />
+
+            <input style="width:200px" type="range" min="0" max="320" step="1" @bind-value="points[2].x" />
+            <input style="width:200px" type="range" min="0" max="240" step="1" @bind-value="points[2].y" /> <br />
+
+            <input style="width:200px" type="range" min="0" max="320" step="1" @bind-value="points[3].x" />
+            <input style="width:200px" type="range" min="0" max="240" step="1" @bind-value="points[3].y" /> <br />
+
 
             <button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button> <br />
             <button class="btn btn-primary mb-3" @onclick="WarpImg">Warp</button> <br />

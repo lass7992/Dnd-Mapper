@@ -99,8 +99,8 @@ function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4) {
     let pixels = ctx.getImageData(0, 0, 320, 240).data;
     ctx.fillRect(0, 0, 320, 240)
 
-    let NewWidth = 24 * gridX;
-    let NewHeight = 24 * gridY;
+    let NewWidth = 16 * gridX;
+    let NewHeight = 16 * gridY;
 
     const imgData = ctx.createImageData(NewWidth, NewHeight);
 
@@ -118,26 +118,50 @@ function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4) {
     let CurrentWidth = XWrapedWidthTop + XWrapedDiff * ((YCounter) / NewHeight);
     let CurrentPixelWidth = CurrentWidth / NewWidth;
 
-    for (let i = 0; i < imgData.data.length; i += 4) {
-        let CurrentHeight = YWrapedHeightLeft + YWrapedDiff * ((XCounter) / NewWidth);
-        let CurrentPixelHeight = CurrentHeight / NewHeight;
 
+
+
+    let YDirLeft = [(x4 - x1), (y4-y1)]
+    let YDirRight = [(x3 - x2), (y3-y2)]
+
+    let q = YDirLeft[0] ** 2;
+    let q2 = YDirLeft[1] ** 2;
+    let q3 = Math.sqrt(q+q2);
+
+    let YHeightLeft = Math.sqrt(YDirLeft[0] ** 2 + YDirLeft[1] ** 2);
+    let YHeightRight = Math.sqrt(YDirRight[0] ** 2 + YDirRight[1] ** 2);
+    YDirLeft[0] /= NewHeight; 
+    YDirLeft[1] /= NewHeight; 
+    YDirRight[0] /= NewHeight; 
+    YDirRight[1] /= NewHeight; 
+
+    let currentPoints = [[x1,y1],[x2,y2]]
+
+    let XDir = [(currentPoints[1][0] - currentPoints[0][0]), (currentPoints[1][1] - currentPoints[0][1])]
+    let XWidth = Math.sqrt(XDir[0] ** 2 + XDir[1] ** 2);
+    XDir[0] /= NewWidth; 
+    XDir[1] /= NewWidth; 
+    XWidth /= NewWidth;
+
+
+
+    for (let i = 0; i < imgData.data.length; i += 4) {        
 
         let red = 0;
         let green = 0;
         let blue = 0;
 
         //Cal color of pixel
-        XStart = x1 + XCounter * CurrentPixelWidth;
+        XStart = currentPoints[0][0] + XCounter * XDir[0];
         XStart = Math.round(XStart)
-        YStart = y1 + YCounter * CurrentPixelHeight;
+        YStart = currentPoints[0][1] + XCounter * XDir[1];
         YStart = Math.round(YStart)
 
         let PixelSize = 0;
-        for (let tempX = 0; tempX < Math.round(CurrentPixelWidth); tempX++) {
-            for (let tempY = 0; tempY < Math.round(CurrentPixelHeight); tempY++) {
+        for (let tempX = 0; tempX < Math.max(Math.round(XDir[0]),1); tempX++) {
+            for (let tempY = 0; tempY < Math.max(Math.round(XDir[1]),1); tempY++) {
+
                 let PixelIndex = Math.round((XStart + tempX + (YStart+tempY) * 320) * 4)
-                let h = pixels[PixelIndex];
 
                 red += pixels[PixelIndex];
                 green += pixels[PixelIndex + 1];
@@ -165,10 +189,20 @@ function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4) {
         XCounter++;
         if (XCounter >= NewWidth)
         {
+            currentPoints[0][0] += YDirLeft[0];
+            currentPoints[0][1] += YDirLeft[1];
+            currentPoints[1][0] += YDirRight[0];
+            currentPoints[1][1] += YDirRight[1];
+
+            XDir = [(currentPoints[1][0] - currentPoints[0][0]), (currentPoints[1][1] - currentPoints[0][1])]
+            XWidth = Math.sqrt(XDir[0] ** 2 + XDir[1] ** 2);
+            XDir[0] /= NewWidth; 
+            XDir[1] /= NewWidth; 
+            XWidth /= NewWidth;
+
+
             XCounter = 0;
             YCounter++;
-            CurrentWidth = XWrapedWidthTop + XWrapedDiff * ((YCounter) / NewHeight);
-            CurrentPixelWidth = CurrentWidth / NewWidth;
         }
     }
     ctx.putImageData(imgData, 0, 0);
