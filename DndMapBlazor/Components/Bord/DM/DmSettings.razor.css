@@ -37,3 +37,12 @@
         cursor: pointer;
     }
 
+
+.VideoDragPoint {
+    border-radius: 50%;
+    border: 2px solid red;
+    background: transparent;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+}

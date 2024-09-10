@@ -71,9 +71,22 @@ function startVideo(src) {
             video.onloadedmetadata = function (e) {
                 video.play();
             };
+
             //mirror image
-            video.style.webkitTransform = "scaleX(-1)";
-            video.style.transform = "scaleX(-1)";
+            video.style.webkitTransform = "scaleX(1)";
+            video.style.transform = "scaleX(1)";
+
+            var camaraVideo = document.getElementById('CamaraVideo');
+            camaraVideo.addEventListener('dragover', e => e.preventDefault());
+
+            var dragPoints = document.getElementsByClassName("VideoDragPoint");
+            console.log(dragPoints, dragPoints)
+            let halfWidth = (dragPoints[0].offsetWidth) / 2
+
+            for (let i = 0; i < dragPoints.length; i++) {
+                console.log("etst", halfWidth);
+                dragPoints[i].addEventListener('dragstart', e => { console.log('asdf'); e.dataTransfer.setDragImage(dragPoints[i], halfWidth, halfWidth) })
+            }
         });
     }
 }
@@ -88,20 +101,29 @@ function getFrame(src, dest) {
 }
 
 function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4) {
-    let gridX = 10;
-    let gridY = 10;
+    let gridX = 7;
+    let gridY = 8;
+
+    let width = 320
+    let height = 240
+
+    let tileSize = 32
 
     let video = document.getElementById(src);
+    width = video.offsetWidth
+    height = video.offsetHeight
+
     let canvas = document.getElementById(dest);
     let ctx = canvas.getContext('2d');
 
-    ctx.drawImage(video, 0, 0, 320, 240);
-    let pixels = ctx.getImageData(0, 0, 320, 240).data;
-    ctx.fillRect(0, 0, 320, 240)
+    ctx.drawImage(video, 0, 0, width, height);
+    let pixels = ctx.getImageData(0, 0, width, height).data;
+    ctx.fillRect(0, 0, width, height)
 
-    let NewWidth = 16 * gridX;
-    let NewHeight = 16 * gridY;
+    let NewWidth = tileSize * gridX;
+    let NewHeight = tileSize * gridY;
 
+    ctx.clearRect(0, 0, ctx.width, ctx.height)
     const imgData = ctx.createImageData(NewWidth, NewHeight);
 
     // Implement thins.
@@ -161,7 +183,7 @@ function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4) {
         for (let tempX = 0; tempX < Math.max(Math.round(XDir[0]),1); tempX++) {
             for (let tempY = 0; tempY < Math.max(Math.round(XDir[1]),1); tempY++) {
 
-                let PixelIndex = Math.round((XStart + tempX + (YStart+tempY) * 320) * 4)
+                let PixelIndex = Math.round((XStart + tempX + (YStart+tempY) * width) * 4)
 
                 red += pixels[PixelIndex];
                 green += pixels[PixelIndex + 1];
@@ -214,8 +236,7 @@ function getWarpedFrame(src, dest, x1, y1, x2, y2, x3, y3, x4, y4) {
 
 function SetDragImage(dragEvent)
 {
-    elem = document.getElementById("EmptyDragImage")    
-    
+    elem = document.getElementById("EmptyDragImage")        
     dragEvent.dataTransfer.setDragImage(elem, 0, 0);
 }
 

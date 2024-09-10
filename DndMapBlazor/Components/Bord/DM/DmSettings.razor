@@ -20,6 +20,7 @@
             @* Camara *@
             <input type="checkbox" value="@sessionGameMetaData.UseCamara" @onchange="x => {sessionGameMetaData.UseCamara = (bool)x.Value; CamaraModalOpen = true;} " />
 
+
             <span> give dimenstion X</span>
             <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;">
                 <input type="number" min="0" @bind-value="sessionGameMetaData.CamaraRealWorldWidth" />
@@ -38,32 +39,22 @@
   <div class="modal-content">
         <div>
             <div style="display:flex">
-                <video id="videoFeed" width="320" height="240" /><canvas class="d-none" id="currentFrame" width="320" height="240" /><br />
-                <div style="position:relative">
-                    <img id="img" style="width:320px" src="@Img" />
-                    <svg style="position:absolute;left:0;top:0;" stroke-linejoin="round" width="320px" height="240px">
+                <div style="position:relative; z-index:2;" id="CamaraVideo" >
+                    <video id="videoFeed" width="640" height="480" />
+                    <canvas class="d-none" id="currentFrame" width="640" height="480" /><br />
+                    <svg style="position:absolute;left:0;top:0;" stroke-linejoin="round" width="640px" height="480px">
                             <polyline stroke-linejoin="round" points="@points.Select(p => p.x + "," + p.y).Aggregate((x,y) => x + " " + y) @(points[0].x + "," + points[0].y)" stroke="black" stroke-width="1" fill="none" />
                     </svg>                    
-                    <div draggable="true" @ondragend="x => DragPoint(x,0)" style="border:3px solid red;position:absolute; width:1px; height:4px; left:@(points[0].x)px; top:@(points[0].y)px"></div>
-                    <div draggable="true" @ondragend="x => DragPoint(x,1)" style="border:3px solid red;position:absolute; width:1px; height:4px; left:@(points[1].x)px; top:@(points[1].y)px"></div>
-                    <div draggable="true" @ondragend="x => DragPoint(x,2)" style="border:3px solid red;position:absolute; width:1px; height:4px; left:@(points[2].x)px; top:@(points[2].y)px"></div>
-                    <div draggable="true" @ondragend="x => DragPoint(x,3)" style="border:3px solid red;position:absolute; width:1px; height:4px; left:@(points[3].x)px; top:@(points[3].y)px"></div>
+                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,0)" style="left:@(points[0].x)px; top:@(points[0].y)px"></div>
+                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,1)" style="left:@(points[1].x)px; top:@(points[1].y)px"></div>
+                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,2)" style="left:@(points[2].x)px; top:@(points[2].y)px"></div>
+                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,3)" style="left:@(points[3].x)px; top:@(points[3].y)px"></div>
                 </div>
-                <img id="img" style="width:320px" src="@ImgWrapped" />
+                @* <img id="img" style="width:320px" src="@Img" /> *@
+
+                <img id="img" style="width:640px" src="@ImgWrapped" />
 
             </div>
-            <input style="width:200px" type="range" min="0" max="320" step="1" @bind-value="points[0].x" />
-            <input style="width:200px" type="range" min="0" max="240" step="1" @bind-value="points[0].y" /> <br />
-
-            <input style="width:200px" type="range" min="0" max="320" step="1" @bind-value="points[1].x" />
-            <input style="width:200px" type="range" min="0" max="240" step="1" @bind-value="points[1].y" /> <br />
-
-            <input style="width:200px" type="range" min="0" max="320" step="1" @bind-value="points[2].x" />
-            <input style="width:200px" type="range" min="0" max="240" step="1" @bind-value="points[2].y" /> <br />
-
-            <input style="width:200px" type="range" min="0" max="320" step="1" @bind-value="points[3].x" />
-            <input style="width:200px" type="range" min="0" max="240" step="1" @bind-value="points[3].y" /> <br />
-
 
             <button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button> <br />
             <button class="btn btn-primary mb-3" @onclick="WarpImg">Warp</button> <br />
