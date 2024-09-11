@@ -24,9 +24,8 @@ namespace DndMapBlazor.Models.SessionEntites
 
 
         //Maybe not used?
-        public double CamaraRealWorldWidth { get; set; }
-        public double CamaraRealWorldHeight { get; set; }
+        public (double x, double y)[] CamaraPoints { get; set; } = new (double x, double y)[] { new(0, 0), new(200, 0), new(200, 200), new(0, 200) };
 
-        public Session? session { get; set; } = new Session();
+        public Session? Session { get; set; } = new Session();
     }
 }

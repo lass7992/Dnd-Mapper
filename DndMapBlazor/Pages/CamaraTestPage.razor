@@ -1,0 +1,70 @@
+﻿@page "/CamaraTestPage"
+<div>
+    <div style="display:flex">
+        <div style="position:relative; z-index:2;" id="CamaraVideo">
+            <video id="videoFeed" width="640" height="480" />
+            <canvas class="d-none" id="currentFrame" width="640" height="480" /><br />
+            <svg style="position:absolute;left:0;top:0;" stroke-linejoin="round" width="640px" height="480px">
+                <polyline stroke-linejoin="round" points="@points.Select(p => p.x + "," + p.y).Aggregate((x,y) => x + " " + y) @(points[0].x + "," + points[0].y)" stroke="black" stroke-width="1" fill="none" />
+            </svg>
+            <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,0)" style="left:@(points[0].x)px; top:@(points[0].y)px"></div>
+            <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,1)" style="left:@(points[1].x)px; top:@(points[1].y)px"></div>
+            <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,2)" style="left:@(points[2].x)px; top:@(points[2].y)px"></div>
+            <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,3)" style="left:@(points[3].x)px; top:@(points[3].y)px"></div>
+        </div>
+        @* <img id="img" style="width:320px" src="@Img" /> *@
+
+        <div style="display:grid;height: min-content;">
+        @for(int i = 0; i < images.Count(); i++)
+        {
+                <img id="@(i)" style="width:32px;height:32px; border:1px solid red; margin:0px; grid-row:@(i % gridX + 1);grid-column:@(1+Math.Floor((double)i/(double)gridX))" src="@images[i]" />
+        }
+        </div>
+
+
+    </div>
+
+    <button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button> <br />
+    <button class="btn btn-primary mb-3" @onclick="WarpImg">Warp</button> <br />
+</div>
+
+@code {
+    [Inject]
+    IJSRuntime? JS { get; set; }
+
+    public string Img { get; set; }
+
+    public string ImgWrapped { get; set; }
+    public List<string> images { get; set; } = new List<string>();
+
+    (double x, double y)[] points { get; set; } = new (double x, double y)[] { new(0, 0), new(200, 0), new(200, 200), new(0, 200) };
+
+    int gridX { get; set; } = 6;
+    int gridY { get; set; } = 6;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JS!.InvokeVoidAsync("startVideo", "videoFeed");
+    }
+
+    private async Task CaptureFrame()
+    {
+        Img = await JS!.InvokeAsync<String>("getFrame", "videoFeed", "currentFrame");
+        StateHasChanged();
+    }
+
+    private async Task WarpImg()
+    {
+        var newImages = await JS!.InvokeAsync<String[]>("getWarpedFrame", "videoFeed", "currentFrame", gridX,gridY, points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y, points[3].x, points[3].y);
+        images.Clear();
+        images.AddRange(newImages);
+        StateHasChanged();
+    }
+
+    private async Task DragPoint(DragEventArgs args, int id)
+    {
+        points[id].x += args.OffsetX;
+        points[id].y += args.OffsetY;
+    }
+
+}

@@ -46,12 +46,12 @@ namespace DndMapBlazor.Components.Bord.DM
             base.OnInitialized();
 
             Random rand = new Random();
-            foreach (var player in sessionGameMetaData!.session!.players)
+            foreach (var player in sessionGameMetaData!.Session!.players)
             {
                 tokens.Add(new PlayerBordToken()
                 {
-                    Name = player.Name,
-                    img = player.image,
+                    Name = player!.Name,
+                    img = player!.image,
                     X = rand.Next(0, thisField.gridX),
                     Y = rand.Next(0, thisField.gridY),
                 });

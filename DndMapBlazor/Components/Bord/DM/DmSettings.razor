@@ -20,17 +20,6 @@
             @* Camara *@
             <input type="checkbox" value="@sessionGameMetaData.UseCamara" @onchange="x => {sessionGameMetaData.UseCamara = (bool)x.Value; CamaraModalOpen = true;} " />
 
-
-            <span> give dimenstion X</span>
-            <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;">
-                <input type="number" min="0" @bind-value="sessionGameMetaData.CamaraRealWorldWidth" />
-            </div>
-
-            <span> give dimenstion Y</span>
-            <div class="row" style="@(!TabOpened ? "pointer-events: none; opacity: 0.4;" : ""); height:50px;">
-                <input type="number" min="0" @bind-value="sessionGameMetaData.CamaraRealWorldHeight" />
-            </div>
-
         </div>
     </div>
 </div>
@@ -43,21 +32,14 @@
                     <video id="videoFeed" width="640" height="480" />
                     <canvas class="d-none" id="currentFrame" width="640" height="480" /><br />
                     <svg style="position:absolute;left:0;top:0;" stroke-linejoin="round" width="640px" height="480px">
-                            <polyline stroke-linejoin="round" points="@points.Select(p => p.x + "," + p.y).Aggregate((x,y) => x + " " + y) @(points[0].x + "," + points[0].y)" stroke="black" stroke-width="1" fill="none" />
+                        <polyline stroke-linejoin="round" points="@sessionGameMetaData.CamaraPoints.Select(p => p.x + "," + p.y).Aggregate((x,y) => x + " " + y) @(sessionGameMetaData.CamaraPoints[0].x + "," + sessionGameMetaData.CamaraPoints[0].y)" stroke="black" stroke-width="1" fill="none" />
                     </svg>                    
-                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,0)" style="left:@(points[0].x)px; top:@(points[0].y)px"></div>
-                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,1)" style="left:@(points[1].x)px; top:@(points[1].y)px"></div>
-                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,2)" style="left:@(points[2].x)px; top:@(points[2].y)px"></div>
-                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,3)" style="left:@(points[3].x)px; top:@(points[3].y)px"></div>
+                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,0)" style="left:@(sessionGameMetaData.CamaraPoints[0].x)px; top:@(sessionGameMetaData.CamaraPoints[0].y)px"></div>
+                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,1)" style="left:@(sessionGameMetaData.CamaraPoints[1].x)px; top:@(sessionGameMetaData.CamaraPoints[1].y)px"></div>
+                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,2)" style="left:@(sessionGameMetaData.CamaraPoints[2].x)px; top:@(sessionGameMetaData.CamaraPoints[2].y)px"></div>
+                    <div class="VideoDragPoint" draggable="true" @ondragend="x => DragPoint(x,3)" style="left:@(sessionGameMetaData.CamaraPoints[3].x)px; top:@(sessionGameMetaData.CamaraPoints[3].y)px"></div>
                 </div>
-                @* <img id="img" style="width:320px" src="@Img" /> *@
-
-                <img id="img" style="width:640px" src="@ImgWrapped" />
-
             </div>
-
-            <button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button> <br />
-            <button class="btn btn-primary mb-3" @onclick="WarpImg">Warp</button> <br />
         </div>
     <button @onclick="x => CamaraModalOpen = false"> Close </button>
   </div>

@@ -38,7 +38,7 @@ namespace DndMapBlazor.Components.Bord.DM
 
         protected override void OnInitialized()
         {
-            currentMap = sessionGameMetaData!.session!.World;
+            currentMap = sessionGameMetaData!.Session!.World;
 
             UpdateMapTimer = new Timer(async x => await UpdateMapSize(), null, 0, 100);
 
@@ -83,7 +83,7 @@ namespace DndMapBlazor.Components.Bord.DM
             changeMap.ToImage = entity.mapImage;
 
 
-            if (entity == sessionGameMetaData!.session!.World || entity == currentMap.ParentZone)
+            if (entity == sessionGameMetaData!.Session!.World || entity == currentMap.ParentZone)
             {
                 changeMap.ZoomIn = false;
                 changeMap.xPos = ((currentMap.x + (currentMap.width / 2)));

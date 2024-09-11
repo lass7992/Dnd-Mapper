@@ -1,12 +1,8 @@
 ﻿using Blazored.LocalStorage;
 using DndMapBlazor.Models.SessionEntites;
-using DndMapBlazor.Models.SessionEntites.PlayerBordCommunication;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Text.Json;
 
 namespace DndMapBlazor.Components.Bord.DM
 {
@@ -26,21 +22,11 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public bool TabOpened { get; set; }
 
-        public string Img { get; set; }
-
-        public string ImgWrapped { get; set; }
-
         private bool CamaraModalOpen { get; set; }
-
-        double skewX = 0, skewY = 0,scalX = 1,scalY = 1;
-
-        (double x, double y)[] points { get; set; } = new (double x, double y)[] { new(0, 0), new(200, 0), new(200, 200), new(0, 200) };
-
-
 
         public async Task OpenUpPlayingTab()
         {
-            await LocalStorage!.SetItemAsync("Session", sessionGameMetaData!.session!);
+            await LocalStorage!.SetItemAsync("Session", sessionGameMetaData!.Session!);
 
             var command = new GameCommunicationModel()
             {
@@ -57,9 +43,9 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public async Task SaveMesurmentUnit()
         {
-            sessionGameMetaData!.session!.MesurmentUnit = (100/sessionGameMetaData!.RealWorldScaling);
+            sessionGameMetaData!.Session!.MesurmentUnit = (100/sessionGameMetaData!.RealWorldScaling);
 
-            await NewCommand(Models.SessionEntites.GameCommunicationCommand.GiveMesurments, sessionGameMetaData!.session.MesurmentUnit.ToString());
+            await NewCommand(Models.SessionEntites.GameCommunicationCommand.GiveMesurments, sessionGameMetaData!.Session.MesurmentUnit.ToString());
         }
 
         public async Task NewCommand(GameCommunicationCommand command, string? data = null)
@@ -75,7 +61,7 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public async void StartGame() 
         {
-            sessionGameMetaData!.session!.state = SessionState.Running;
+            sessionGameMetaData!.Session!.state = SessionState.Running;
             await SessionUpdatedCallBack.InvokeAsync();
             this.StateHasChanged();
         }
@@ -89,24 +75,10 @@ namespace DndMapBlazor.Components.Bord.DM
         {
             CamaraModalOpen = false;
         }
-
-        private async Task CaptureFrame()
-        {
-            Img = await JS!.InvokeAsync<String>("getFrame", "videoFeed", "currentFrame");
-            StateHasChanged();
-        }
-
-
-        private async Task WarpImg()
-        {
-            ImgWrapped = await JS!.InvokeAsync<String>("getWarpedFrame", "videoFeed", "currentFrame", points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y, points[3].x, points[3].y);
-            StateHasChanged();
-        }
-
         private async Task DragPoint(DragEventArgs args, int id)
         {
-            points[id].x += args.OffsetX;
-            points[id].y += args.OffsetY;
+            sessionGameMetaData.CamaraPoints[id].x += args.OffsetX;
+            sessionGameMetaData.CamaraPoints[id].y += args.OffsetY;
         }
     }
 }
