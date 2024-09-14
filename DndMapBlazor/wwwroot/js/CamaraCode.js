@@ -33,13 +33,15 @@
 function getFrame(src, dest) {
     let video = document.getElementById(src);
     let canvas = document.getElementById(dest);
-    canvas.getContext('2d').drawImage(video, 0, 0, 320, 240);
+    canvas.width = 640
+    canvas.height = 480
+    canvas.getContext('2d').drawImage(video, 0, 0, 640, 480 );
 
     let dataUrl = canvas.toDataURL("image/jpeg");
     return dataUrl;
 }
 
-function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4) {
+function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4, perspecWidth) {
     let tileSize = 32
 
     let video = document.getElementById(src);
@@ -65,15 +67,16 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4)
     ctx.clearRect(0, 0, ctx.width, ctx.height)
     const imgData = ctx.createImageData(NewWidth, NewHeight);
 
-    // Implement thins.
     let XCounter = 0;
     let YCounter = 0;
 
     let YDirLeft = [(x4 - x1), (y4-y1)]
     let YDirRight = [(x3 - x2), (y3-y2)]
 
+    //Use these to perspective
     let YHeightLeft = Math.sqrt(YDirLeft[0] ** 2 + YDirLeft[1] ** 2);
     let YHeightRight = Math.sqrt(YDirRight[0] ** 2 + YDirRight[1] ** 2);
+
     YDirLeft[0] /= NewHeight; 
     YDirLeft[1] /= NewHeight; 
     YDirRight[0] /= NewHeight; 
@@ -82,10 +85,42 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4)
     let currentPoints = [[x1,y1],[x2,y2]]
 
     let XDir = [(currentPoints[1][0] - currentPoints[0][0]), (currentPoints[1][1] - currentPoints[0][1])]
-    let XWidth = Math.sqrt(XDir[0] ** 2 + XDir[1] ** 2);
+    let XDirBot = [(x4 - x3), (y4 - y3)]
+    let XWidthTop = Math.sqrt(XDir[0] ** 2 + XDir[1] ** 2);
+    let XWidthBot = Math.sqrt(XDirBot[0] ** 2 + XDirBot[1] ** 2);
+    let DiffX = XWidthBot - XWidthTop;
+    let DiffPro = (DiffX / XWidthBot) * 100;
+
+
+    // MAgic number, find et bedre tal?
+    DiffPro *= 2
+
+
     XDir[0] /= NewWidth; 
     XDir[1] /= NewWidth; 
-    XWidth /= NewWidth;
+
+
+
+
+
+    let YDirLeftPerspective = [YDirLeft[0] / 100 * DiffPro, YDirLeft[1] / 100 * DiffPro]
+    let YDirRightPerspective = [YDirRight[0] / 100 * DiffPro, YDirRight[1] / 100 * DiffPro]
+
+    YDirLeft[0] -= YDirLeftPerspective[0] * 0.5;
+    YDirLeft[1] -= YDirLeftPerspective[1] * 0.5;
+    YDirRight[0] -= YDirRightPerspective[0] * 0.5;
+    YDirRight[1] -= YDirRightPerspective[1] * 0.5;
+
+    let TotalPerspectiveSteps = 0
+    for (let i = 1; i <= NewHeight; i++) {
+        TotalPerspectiveSteps += 1;
+    }
+    YDirLeftPerspective[0] /= TotalPerspectiveSteps;
+    YDirLeftPerspective[1] /= TotalPerspectiveSteps;
+    YDirRightPerspective[0] /= TotalPerspectiveSteps;
+    YDirRightPerspective[1] /= TotalPerspectiveSteps; 
+
+
 
 
 
@@ -128,20 +163,26 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4)
         XCounter++;
         if (XCounter >= NewWidth)
         {
+            XCounter = 0;
+            YCounter++;
+
+
+            //Add perspective to ydir;
+            YDirLeft[0] = YDirLeft[0] + YDirLeftPerspective[0];
+            YDirLeft[1] = YDirLeft[1] + YDirLeftPerspective[1];
+            YDirRight[0] = YDirRight[0] + YDirRightPerspective[0];
+            YDirRight[1] = YDirRight[1] + YDirRightPerspective[1]; 
+
+            //Add Ydir to currentPoints
             currentPoints[0][0] += YDirLeft[0];
             currentPoints[0][1] += YDirLeft[1];
             currentPoints[1][0] += YDirRight[0];
             currentPoints[1][1] += YDirRight[1];
 
+            //Calculate new YDir
             XDir = [(currentPoints[1][0] - currentPoints[0][0]), (currentPoints[1][1] - currentPoints[0][1])]
-            XWidth = Math.sqrt(XDir[0] ** 2 + XDir[1] ** 2);
             XDir[0] /= NewWidth; 
             XDir[1] /= NewWidth; 
-            XWidth /= NewWidth;
-
-
-            XCounter = 0;
-            YCounter++;
         }
     }
 
