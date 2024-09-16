@@ -103,7 +103,6 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4,
 
 
     let YDirLeftPerspective = [YDirLeft[0] / 100 * DiffPro, YDirLeft[1] / 100 * DiffPro]
-    let YDirRightPerspective = [YDirRight[0] / 100 * DiffPro, YDirRight[1] / 100 * DiffPro]
 
     YDirLeft[0] -= YDirLeftPerspective[0] * 0.5;
     YDirLeft[1] -= YDirLeftPerspective[1] * 0.5;
