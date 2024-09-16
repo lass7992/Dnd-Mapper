@@ -70,59 +70,33 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4,
     let XCounter = 0;
     let YCounter = 0;
 
+    // SetUp YDir
     let YDirLeft = [(x4 - x1), (y4-y1)]
-    let YDirRight = [(x3 - x2), (y3-y2)]
-
-    //Use these to perspective
-    let YHeightLeft = Math.sqrt(YDirLeft[0] ** 2 + YDirLeft[1] ** 2);
-    let YHeightRight = Math.sqrt(YDirRight[0] ** 2 + YDirRight[1] ** 2);
-
+    let YDirRight = [(x3 - x2), (y3 - y2)]
+    let YDiffPro = GetDiffPro(YDirLeft, YDirRight);
     YDirLeft[0] /= NewHeight; 
     YDirLeft[1] /= NewHeight; 
     YDirRight[0] /= NewHeight; 
     YDirRight[1] /= NewHeight; 
 
+    //Setup XDir
     let currentPoints = [[x1,y1],[x2,y2]]
-
     let XDir = [(currentPoints[1][0] - currentPoints[0][0]), (currentPoints[1][1] - currentPoints[0][1])]
     let XDirBot = [(x4 - x3), (y4 - y3)]
-    let XWidthTop = Math.sqrt(XDir[0] ** 2 + XDir[1] ** 2);
-    let XWidthBot = Math.sqrt(XDirBot[0] ** 2 + XDirBot[1] ** 2);
-    let DiffX = XWidthBot - XWidthTop;
-    let DiffPro = (DiffX / XWidthBot) * 100;
-
-    // MAgic number, find et bedre tal?
-    DiffPro *= 2
-
-
-    XDir[0] /= NewWidth; 
+    let XDiffPro = GetDiffPro(XDir, XDirBot);
+    XDir[0] /= NewWidth;
     XDir[1] /= NewWidth; 
 
 
-
-
-
-    let YDirLeftPerspective = [YDirLeft[0] / 100 * DiffPro, YDirLeft[1] / 100 * DiffPro]
-
-    YDirLeft[0] -= YDirLeftPerspective[0] * 0.5;
-    YDirLeft[1] -= YDirLeftPerspective[1] * 0.5;
-    YDirRight[0] -= YDirRightPerspective[0] * 0.5;
-    YDirRight[1] -= YDirRightPerspective[1] * 0.5;
-
-    let TotalPerspectiveSteps = 0
-    for (let i = 1; i <= NewHeight; i++) {
-        TotalPerspectiveSteps += 1;
-    }
-    YDirLeftPerspective[0] /= TotalPerspectiveSteps;
-    YDirLeftPerspective[1] /= TotalPerspectiveSteps;
-    YDirRightPerspective[0] /= TotalPerspectiveSteps;
-    YDirRightPerspective[1] /= TotalPerspectiveSteps; 
-
-
-
-
+        //Get perspective
+    let XPerspective, YDirLeftPerspective, YDirRightPerspective;
+    [XDir, XPerspective] = GetPerspective(XDir, YDiffPro, NewWidth);
+    [YDirLeft, YDirRight, YDirLeftPerspective, YDirRightPerspective] = GetPerspectives(YDirLeft,YDirRight,XDiffPro, NewHeight);
 
     for (let i = 0; i < imgData.data.length; i += 4) {        
+        XDir[0] = XDir[0] + XPerspective[0];
+        XDir[1] = XDir[1] + XPerspective[1];
+
 
         let red = 0;
         let green = 0;
@@ -164,7 +138,6 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4,
             XCounter = 0;
             YCounter++;
 
-
             //Add perspective to ydir;
             YDirLeft[0] = YDirLeft[0] + YDirLeftPerspective[0];
             YDirLeft[1] = YDirLeft[1] + YDirLeftPerspective[1];
@@ -179,8 +152,9 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4,
 
             //Calculate new YDir
             XDir = [(currentPoints[1][0] - currentPoints[0][0]), (currentPoints[1][1] - currentPoints[0][1])]
-            XDir[0] /= NewWidth; 
+            XDir[0] /= NewWidth;
             XDir[1] /= NewWidth; 
+            [XDir, XPerspective] = GetPerspective(XDir, YDiffPro, NewWidth);
         }
     }
 
@@ -231,4 +205,61 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4,
     }
 
     return DataArray;
+}
+
+function GetDiffPro(Dir1, Dir2)
+{
+    let Width1 = Math.sqrt(Dir1[0] ** 2 + Dir1[1] ** 2);
+    let Width2 = Math.sqrt(Dir2[0] ** 2 + Dir2[1] ** 2);
+    let Diff = Width2 - Width1;
+    let DiffPro = (Diff / Width2) * 100;
+    return DiffPro
+}
+
+function GetPerspectives(Dir1, Dir2, DiffPro , endImageWidth)
+{
+    DiffPro *= 2
+
+    let Perspective1 = [Dir1[0] / 100 * DiffPro, Dir1[1] / 100 * DiffPro]
+    let Perspective2 = [Dir2[0] / 100 * DiffPro, Dir2[1] / 100 * DiffPro]
+
+    // scale ydir with perspective    
+    Dir1[0] -= Perspective1[0] * 0.5;
+    Dir1[1] -= Perspective1[1] * 0.5;
+    Dir2[0] -= Perspective2[0] * 0.5;
+    Dir2[1] -= Perspective2[1] * 0.5;
+
+    // Scale perspective with steps
+    let TotalPerspectiveSteps = 0
+    for (let i = 1; i <= endImageWidth; i++) {
+        TotalPerspectiveSteps += 1;
+    }
+    Perspective1[0] /= TotalPerspectiveSteps;
+    Perspective1[1] /= TotalPerspectiveSteps;
+    Perspective2[0] /= TotalPerspectiveSteps;
+    Perspective2[1] /= TotalPerspectiveSteps;
+
+    return [Dir1, Dir2, Perspective1, Perspective2]
+}
+
+function GetPerspective(Dir, DiffPro, endImageWidth) {
+    DiffPro *= 2
+
+    let Perspective = [Dir[0] / 100 * DiffPro, Dir[1] / 100 * DiffPro]
+
+    // scale ydir with perspective    
+    Dir[0] -= Perspective[0] * 0.5;
+    Dir[1] -= Perspective[1] * 0.5;
+
+    // Scale perspective with steps
+    let TotalPerspectiveSteps = 0
+    for (let i = 1; i <= endImageWidth; i++) {
+        TotalPerspectiveSteps += 1;
+    }
+    TotalPerspectiveSteps *= 2; //Apparantly, i dunno why
+
+    Perspective[0] /= TotalPerspectiveSteps;
+    Perspective[1] /= TotalPerspectiveSteps;
+
+    return [Dir, Perspective]
 }
