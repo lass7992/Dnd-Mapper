@@ -41,7 +41,7 @@ function getFrame(src, dest) {
     return dataUrl;
 }
 
-function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4, perspecWidth) {
+function getWarpedFrame(src, dest, gridX, gridY, GridXStart, GridYStart, x1, y1, x2, y2, x3, y3, x4, y4) {
     let tileSize = 32
 
     let video = document.getElementById(src);
@@ -167,17 +167,23 @@ function getWarpedFrame(src, dest, gridX, gridY, x1, y1, x2, y2, x3, y3, x4, y4,
 
     canvas.width = tileSize
     canvas.height = tileSize
-    
+
+    gridX -= GridXStart
+    gridY -= GridYStart
+    gridX = Math.floor(gridX)
+    gridY = Math.floor(gridY)
+    GridXStart = Math.round(tileSize * GridXStart) // Convert % to pixel
+    GridYStart = Math.round(tileSize * GridYStart) 
     for (let gx = 0; gx < gridX; gx++)
     {
-        let startX = gx * tileSize
+        let startX = GridXStart + gx * tileSize
         for (let gy = 0; gy < gridY; gy++)
         {
             const imgData = ctx.createImageData(tileSize, tileSize);
             let pixelCount = tileSize * tileSize;
 
 
-            let startY = gy * tileSize
+            let startY = GridYStart + gy * tileSize
 
             let countX = 0;
             let countY = 0;

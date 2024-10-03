@@ -35,7 +35,7 @@
         <div style="display:grid;height: min-content;">
         @for(int i = 0; i < images.Count(); i++)
         {
-                <img id="@(i)" style="width:64px;height:64px; border:1px solid red; margin:0px; grid-row:@(i % gridY + 1);grid-column:@(1+Math.Floor((double)i/(double)gridY))" src="@images[i]" />
+                <img id="@(i)" style="width:64px;height:64px; border:1px solid red; margin:0px; grid-row:@(i % gridYInt + 1);grid-column:@(1+Math.Floor((double)i/(double)gridYInt))" src="@images[i]" />
         }
         </div>
     </div>
@@ -51,7 +51,9 @@
 
     X<input type="text" @bind-value="gridX" />
     Y<input type="text" @bind-value="gridY" />
-    perspectiveWidth<input type="number" @bind-value="perspectiveWidth" step="0.1" min="0" max="100" />
+
+    Xstart<input type="text" @bind-value="startGridX" />
+    Ystart<input type="text" @bind-value="startGridY" />
 
 </div>
 
@@ -64,14 +66,19 @@
     public string ImgWrapped { get; set; }
     public List<string> images { get; set; } = new List<string>();
 
-    (double x, double y)[] points { get; set; } = new (double x, double y)[] { new(70, 105), new(293, 12), new(405, 214), new(174, 325) };
+    (double x, double y)[] points { get; set; } = new (double x, double y)[] { new(97, 115), new(289, 34), new(383, 207), new(184, 299) };
 
     public int selectedPoint { get; set; } = -2;
 
-    int gridX { get; set; } = 6;
-    int gridY { get; set; } = 6;
 
-    double perspectiveWidth { get; set; } = 0;
+    int gridXInt => (int)Math.Floor(gridX - startGridX);
+    int gridYInt => (int)Math.Floor(gridY - startGridY);
+
+
+    double gridX { get; set; } = 5.5;
+    double gridY { get; set; } = 5.5;
+    double startGridX { get; set; } = 0.5;
+    double startGridY { get; set; } = 0.5;
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,7 +93,7 @@
 
     private async Task WarpImg()
     {
-        var newImages = await JS!.InvokeAsync<String[]>("getWarpedFrame", "videoFeed", "currentFrame", gridX,gridY, points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y, points[3].x, points[3].y);
+        var newImages = await JS!.InvokeAsync<String[]>("getWarpedFrame", "videoFeed", "currentFrame", gridX, gridY, startGridX, startGridY, points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y, points[3].x, points[3].y);
         images.Clear();
         images.AddRange(newImages);
         StateHasChanged();
@@ -94,13 +101,13 @@
 
     private async Task WarpImgTemp()
     {
-        var newImages = await JS!.InvokeAsync<String[]>("getWarpedFrame", "img", "currentFrame", gridX, gridY, points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y, points[3].x, points[3].y, perspectiveWidth);
+        var newImages = await JS!.InvokeAsync<String[]>("getWarpedFrame", "img", "currentFrame", gridX, gridY,startGridX, startGridY, points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y, points[3].x, points[3].y);
         images.Clear();
         images.AddRange(newImages);
         StateHasChanged();
     }
 
-    private async Task DragPoint(DragEventArgs args, int id)
+    private void DragPoint(DragEventArgs args, int id)
     {
         selectedPoint = id;
         points[id].x += args.OffsetX;

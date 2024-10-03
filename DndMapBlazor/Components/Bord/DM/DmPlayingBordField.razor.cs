@@ -115,7 +115,6 @@ namespace DndMapBlazor.Components.Bord.DM
             }
 
             X += ((args.OffsetX) / sessionGameMetaData!.DmImageWidth) * 100;
-
             Y += ((args.OffsetY) / sessionGameMetaData!.DmImageHeight) * 100;
 
             //        X = ((args.PageX - ClientX!.Value) / SessionGameMetaData!.DmImageWidth) * 100;
@@ -126,7 +125,7 @@ namespace DndMapBlazor.Components.Bord.DM
             Y = Math.Max(Y, startY);
 
 
-            var data = JsonSerializer.Serialize(new ChangeView() { xStart = X, yStart = Y });
+            var data = JsonSerializer.Serialize(new ChangeView() { xStart = X - startX, yStart = Y - startY });
 
             // Set new command
             var command = new GameCommunicationModel()

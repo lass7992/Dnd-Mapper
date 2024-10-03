@@ -32,7 +32,7 @@
         </div>
     </div>
 
-    <div id="PlayerView" draggable="true" ondrag="OnDrag(event)" onDragStart="SetDragImage(event)" @ondragend="DragView" style="background-color:black;width:50px; height:10px;position:absolute;top:@(Y)%;left:@(X)%; overflow:visible">
+    <div id="PlayerView" draggable="true" ondrag="OnDrag(event)" onDragStart="SetDragImage(event)" @ondragend="DragView" style="background-color:black;width:50px; height:10px;position:absolute;top:calc(@(Y)% - 5px) ;left:calc(@(X)% - 25px); overflow:visible">
         <div draggable="false" style="pointer-events:none; border:2px dashed yellow; width:@(playerBordWidth)px;height:@(playerBordHeight)px; position:absolute; bottom:0px; left:50%; transform:translateX(-50%) translateY(-4px); ">
             <div style="width:100%;height:100%; position:relative">
             </div>

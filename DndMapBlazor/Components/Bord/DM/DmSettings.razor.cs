@@ -18,7 +18,7 @@ namespace DndMapBlazor.Components.Bord.DM
         public EventCallback<bool> SessionUpdatedCallBack { get; set; }
 
         [Parameter]
-        public SessionGameMetaData? sessionGameMetaData { get; set; }
+        public SessionGameMetaData? SessionGameMetaData { get; set; }
 
         public bool TabOpened { get; set; }
 
@@ -26,7 +26,7 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public async Task OpenUpPlayingTab()
         {
-            await LocalStorage!.SetItemAsync("Session", sessionGameMetaData!.Session!);
+            await LocalStorage!.SetItemAsync("Session", SessionGameMetaData!.Session!);
 
             var command = new GameCommunicationModel()
             {
@@ -43,9 +43,9 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public async Task SaveMesurmentUnit()
         {
-            sessionGameMetaData!.Session!.MesurmentUnit = (100/sessionGameMetaData!.RealWorldScaling);
+            SessionGameMetaData!.Session!.MesurmentUnit = (100/SessionGameMetaData!.RealWorldScaling);
 
-            await NewCommand(Models.SessionEntites.GameCommunicationCommand.GiveMesurments, sessionGameMetaData!.Session.MesurmentUnit.ToString());
+            await NewCommand(Models.SessionEntites.GameCommunicationCommand.GiveMesurments, SessionGameMetaData!.Session.MesurmentUnit.ToString());
         }
 
         public async Task NewCommand(GameCommunicationCommand command, string? data = null)
@@ -61,7 +61,7 @@ namespace DndMapBlazor.Components.Bord.DM
 
         public async void StartGame() 
         {
-            sessionGameMetaData!.Session!.state = SessionState.Running;
+            SessionGameMetaData!.Session!.state = SessionState.Running;
             await SessionUpdatedCallBack.InvokeAsync();
             this.StateHasChanged();
         }
@@ -75,10 +75,10 @@ namespace DndMapBlazor.Components.Bord.DM
         {
             CamaraModalOpen = false;
         }
-        private async Task DragPoint(DragEventArgs args, int id)
+        private void DragPoint(DragEventArgs args, int id)
         {
-            sessionGameMetaData.CamaraPoints[id].x += args.OffsetX;
-            sessionGameMetaData.CamaraPoints[id].y += args.OffsetY;
+            SessionGameMetaData!.CamaraPoints[id].x += args.OffsetX;
+            SessionGameMetaData!.CamaraPoints[id].y += args.OffsetY;
         }
     }
 }
