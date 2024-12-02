@@ -19,28 +19,6 @@ namespace DndMapBlazor.Pages
             base.OnInitialized();
         }
 
-
-        private void AddPlayer() 
-        {
-            SessionGameMetaData!.Session!.players.Add(new Player());
-        }
-
-        private void RemovePlayer(Player pl)
-        {
-            SessionGameMetaData!.Session!.players.Remove(pl);
-        }
-        private async void AddPlayerImage(InputFileChangeEventArgs e, Player pl)
-        {
-            loading = true;
-            await using MemoryStream fs = new MemoryStream();
-            await e.File.OpenReadStream(1000000).CopyToAsync(fs);
-            var imageBytes = await ImageHelper.GetBytes(fs);
-            pl.image = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
-            loading = false;
-            this.StateHasChanged();
-        }
-
-
         private void SessionUpdatedHandler(object sender) 
         {
             this.StateHasChanged();

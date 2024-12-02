@@ -37,6 +37,9 @@
     <Content Update="wwwroot\fonts\Royal2-MOXe.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\images\pin.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

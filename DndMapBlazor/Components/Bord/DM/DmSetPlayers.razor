@@ -1,0 +1,46 @@
+﻿<div style="margin:auto;max-width:1300px">
+    <div class="row">
+        <button disabled="@(sessionGameMetaData!.Session!.players.Count==0)" @onclick="ContinueClicked" class="btn btn-outline-primary" style="margin: auto; margin-bottom:10px; width:max-content">Continue</button>
+    </div>
+    <div class="CorckBordCard">
+        <div class="CorckBordCardContainer">
+            <div style="margin:auto; width:100%;">
+                <div id="cardHolderScroller" class="playerCardHolder" onscroll="ChangeVisibilityOfCarosel()">
+                @foreach (var (player, i) in sessionGameMetaData!.Session!.players.Select((value, i) => (value, i)))
+                {
+                    <div id="@(i)player" class="col playerSheet">
+                        <div style="width:60px;height:60px; margin: 0px auto -20px auto;rotate: -90deg;filter: hue-rotate(@(player.color)deg);">
+                            <img style="width:100%" src="/images/pin.png"/>
+                        </div>                        
+                        <div style="position:relative;aspect-ratio:1; margin:10px; box-shadow:2px 2px 4px rgba(0,0,0,0.9);overflow:hidden;background-color:lavender;">
+                            @if (!string.IsNullOrEmpty(player.image))
+                            {
+                                <img class="w-100" src="data:image;base64, @player.image" />
+                            }
+                            else
+                            {
+                                <img class="w-100" style="max-width:200px; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%)" src="/images/orc-min.png" />
+                                <div style="text-align:center; margin-left:10px;margin-right:auto;margin-top: 90%;-ms-transform: translateY(-50%); transform: translateY(-50%);">
+                                    <InputFile OnChange="x => AddPlayerImage(x, player)" />
+                                </div>
+                            }
+                        </div>
+                        <div class="PlayerSheetName" style="">
+                            <input style="font-family:FantasyFont5; filter: drop-shadow(3px 3px 1px rgba(0, 0, 0, 0.3));" type="text" @bind-value="player.Name" placeholder="Enter name...." />
+                        </div>
+                        <button @onclick="x => RemovePlayer(player)" class="btn btn-outline-warning fw-bolder" style="margin: auto;position: absolute;left: 50%;bottom:0; -ms-transform: translate(-50%,-30%); transform: translate(-50%,-30%);">Kick</button>
+                    </div>
+                }
+
+                    <div id="@(sessionGameMetaData!.Session!.players.Count)player" class="col playerSheet">
+                        <button @onclick="AddPlayer" class="btn btn-dark" style="margin: auto;position: absolute;top: 50%;left:50%; -ms-transform: translate(-50%,-50%); transform: translate(-50%,-50%);">Add player</button>
+                    </div>
+                </div>
+                <div id="CaroselButtonHolder" style="display:flex; visibility:hidden">
+                    <div onclick="ScrollPrevCardHolderOnClick()" class="CaroselButton"><i class="arrow"></i></div>
+                    <div onclick="ScrollNextCardHolderOnClick()" class="CaroselButton right"><i class="arrow"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

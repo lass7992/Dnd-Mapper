@@ -14,11 +14,13 @@
     {
         @if (command!.Command == GameCommunicationCommand.SetupBord)
         { 
-        <div style="margin:auto; background-color:white; padding:50px; border-radius:10px; width:fit-content">
+        <div style="margin:auto; background-color:white; padding:50px; border-radius:10px; width:fit-content; position:absolute; top:50%;left:50%;transform:translate(-50%, -50%);">
             <span> Measure this and write into dm page</span>
             <div style="width:100px; height:20px; background-color:black; margin:auto;"></div>
         </div>
         }
+        <div style="margin:auto; background-color:black; border:1px solid white;width:100%;height:100%">
+        </div>
     }
     else if (command!.state == GameCommunicationState.Running)
     {
