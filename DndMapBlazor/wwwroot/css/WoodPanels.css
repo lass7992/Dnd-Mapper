@@ -1,0 +1,78 @@
+﻿/* Wooden Wall [CSS] */
+/* Made with ♥ by Louis Bullock */
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+html {
+    display: block;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Wood Gradient Overlay Shadows and Highlights */
+html:before {
+    background-image: -webkit-radial-gradient(rgba(213,173,105,0.15) 50%,transparent), radial-gradient(transparent,rgba(124,9,5, 0.1) 70%), radial-gradient(transparent 60%,rgba(124,9,5, 0.09) 90%), radial-gradient(transparent 80%,rgba(124,9,5, 0.07) 97%) !important;
+    -webkit-box-shadow: inset 0 -10px 1000px 90px rgba(168,99,60,0.1), inset 0 -10px 100px 70px rgba(74,2,2,0.1), inset 0 -10px 100px 50px rgba(74,2,2,0.05), inset 0 -100px 1000px 70px rgba(74,2,2,0.06) !important;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 4;
+    -webkit-background-size: 100%;
+    display: block;
+    content: "";
+    top: 0px;
+}
+
+/* This is just some subtle noise I put together. Well actually it's not noise per se, more of a subtle pattern to diffuse the background */
+/* I think it's only visible in Safari, but ah well */
+html:after {
+    background-image: -webkit-linear-gradient(45deg, rgba(0,0,0,0.0125) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.0125) 75%, rgba(0,0,0,0.0125)), -webkit-linear-gradient(45deg, rgba(0,0,0,0.0125) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.0125) 75%, rgba(0,0,0,0.0125)) !important;
+    -webkit-background-size: 2px 2px;
+    background-position: 0 0, 1px 1px;
+    display: block;
+    content: "";
+    height: 100%;
+    width: 100%;
+    z-index: 5;
+    position: absolute;
+    top:0px;
+}
+
+/* Wood Base Gradient */
+body {
+    background-image: -webkit-radial-gradient(#D1A46B,#B57744) !important;
+    -webkit-background-size: 100% !important;
+    background-size: 100% !important;
+}
+
+    /* Wood Grain */
+    body:before {
+        content: "";
+        display: block;
+        height: 100%;
+        width: 100%;
+        z-index: 2;
+        position: absolute;
+        background-image: -webkit-linear-gradient(1deg, rgba(255,255,255,.014) 50%, transparent 50%), -webkit-linear-gradient(-1deg, rgba(255,255,255,.015) 50%, transparent 50%), -webkit-linear-gradient(0, transparent 50%, rgba(255,255,255,.02) 50%), -webkit-linear-gradient(0, transparent 50%, rgba(255,255,255,.02) 50%) !important;
+        -webkit-background-size: 13px, 29px, 37px, 53px;
+        top: 0px;
+    }
+
+    /* Wood Panels */
+    body:after {
+        content: "";
+        display: block;
+        height: 100%;
+        width: 100%;
+        z-index: 2;
+        position: absolute;
+        background-image: -webkit-linear-gradient(0.1deg,transparent 97%, rgba(214, 171, 119, 0.5) 97%), -webkit-linear-gradient(-0.1deg,transparent 93%, rgba(173, 97, 54, 0.45) 93%), -webkit-linear-gradient(0,transparent 97%, rgba(214, 171, 119, 0.9) 97%) !important;
+        -webkit-background-size: 80px;
+        top: 0px;
+    }

@@ -1,4 +1,8 @@
-﻿body {
+﻿.page {
+z-index:10
+}
+
+body {
     background-color: whitesmoke !important;
     background-image: url(/images/paper2.png) !important;
     background-size: 800px !important;
