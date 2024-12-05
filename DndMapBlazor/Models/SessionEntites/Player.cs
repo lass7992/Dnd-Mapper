@@ -5,14 +5,17 @@ namespace DndMapBlazor.Models.SessionEntites
     public class Player : bordEntity
     {
         public string Name = "";
+        public int PlayerId = 0;
 
-        static int LastColor = -1;
-        int NextColor { get { LastColor = LastColor < 8 ? LastColor + 1 : 0; return LastColor; }}
+        static int LastId = -1;
+        int NextId { get { LastId = LastId < 8 ? LastId + 1 : 0; return LastId; }}
         public int color = 0;
 
         public Player()
         {
-            color = NextColor * 75;
+            var tempId = NextId;
+            color = tempId * 75;
+            PlayerId = tempId;
         }
     }
 }

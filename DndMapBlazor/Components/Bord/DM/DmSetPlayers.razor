@@ -1,4 +1,32 @@
 ﻿<div style="margin:auto;max-width:1300px; position:relative;">
+    <svg style="display:none">
+        <filter id="wavy1">
+            <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1" />
+            <feDisplacementMap in="SourceGraphic" scale="20" />
+        </filter>
+    </svg>
+    <svg style="display:none">
+        <filter id="wavy2">
+            <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="2" />
+            <feDisplacementMap in="SourceGraphic" scale="20" />
+        </filter>
+    </svg>
+    <svg style="display:none">
+        <filter id="wavy3">
+            <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="3" />
+            <feDisplacementMap in="SourceGraphic" scale="20" />
+        </filter>
+    </svg>
+
+    <svg style="display:none">
+        <filter id="wavyPic">
+            <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="3" />
+            <feDisplacementMap in="SourceGraphic" scale="20" />
+        </filter>
+    </svg>
+
+
+
 
     <div class="row">
         <div class="col-1"></div>
@@ -14,34 +42,52 @@
 
     <div style="margin:auto; width:100%;">
         <div id="cardHolderScroller" class="playerCardHolder" onscroll="ChangeVisibilityOfCarosel()">
-        @foreach (var (player, i) in sessionGameMetaData!.Session!.players.Select((value, i) => (value, i)))
-        {
+            @foreach (var (player, i) in sessionGameMetaData!.Session!.players.Select((value, i) => (value, i)))
+            {
                 <div id="@(i)player" class="col playerSheet">
                     <div class="pin" style="filter: hue-rotate(@(player.color)deg);">
                         <img style="width:100%" src="/images/pin.png" />
                     </div>
 
                     <div class="PlayerSheetPaper">
-                    <div style="position:relative;aspect-ratio:1; margin:10px; box-shadow:2px 2px 4px rgba(0,0,0,0.9);overflow:hidden;background-color:lavender;">
-                        @if (!string.IsNullOrEmpty(player.image))
-                        {
-                            <img class="w-100" src="data:image;base64, @player.image" />
-                        }
-                        else
-                        {
-                            <img class="w-100" style="max-width:200px; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%)" src="/images/orc-min.png" />
-                            <div style="text-align:center; margin-left:10px;margin-right:auto;margin-top: 90%;-ms-transform: translateY(-50%); transform: translateY(-50%);">
-                                <InputFile OnChange="x => AddPlayerImage(x, player)" />
-                            </div>
-                        }
+                        <div class="parchment" style="  filter: url(#wavy@(player.PlayerId % 3 + 1));">
+                            <div class="BurntCorners"></div>
+                        </div>
+
+                        <p class="inkTitle">In hoc Signo vinces</p>
+                        <p id="labarum"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Chi_Rho.svg/1200px-Chi_Rho.svg.png"></p>
+
+                        <div style="position:relative;aspect-ratio:1; overflow:hidden;">
+                            @if (!string.IsNullOrEmpty(player.image))
+                            {
+                                @* Player image *@
+                                <div style="position:absolute; width:90%; height:90%; top:2%; left:5%;">
+                                   <div style="background-color:lavender;filter: url(#wavy@((player.PlayerId+5) % 3 + 1)) drop-shadow(2px 4px 1px rgba(0,0,0 ,0.1));"></div>
+                                    <img class="w-100" style="box-shadow:2px 2px 2px rgba(0,0,0,0.2)" src="data:image;base64, @player.image" />
+                                </div>
+                            }
+                            else
+                            {
+                                @* Image Selector  *@
+                                <div style="position:absolute; width:90%; height:90%; top:2%; left:5%; background-color:lavender;filter: url(#wavy@((player.PlayerId+5) % 3 + 1)) drop-shadow(2px 4px 1px rgba(0,0,0 ,0.1));"></div>
+                                <img class="w-100" style="max-width:200px; position:absolute; top:40%; left:50%; transform:translate(-50%, -50%);" src="/images/orc-min.png" />
+                                <div style="text-align:center; margin-left:40px;margin-right:auto;margin-top: 83%;-ms-transform: translateY(-50%); transform: translateY(-50%);">
+                                    <InputFile OnChange="x => AddPlayerImage(x, player)" />
+                                </div>
+                            }
+                        </div>
+                        @* Player name *@
+                        <div class="PlayerSheetName" style="">
+                            <input style="font-family:FantasyFont5; filter: drop-shadow(3px 3px 1px rgba(0, 0, 0, 0.3));" type="text" @bind-value="player.Name" placeholder="Enter name...." />
+                        </div>
+                        
+                        @* Kick *@
+                        <div style="text-align:center;margin-top:10px;">
+                            <button @onclick="x => RemovePlayer(player)" class="btn btn-outline-warning fw-bolder" style="margin: auto; background-color:rgba(50,100,100,0.2)">Kick</button>
+                        </div>
                     </div>
-                    <div class="PlayerSheetName" style="">
-                        <input style="font-family:FantasyFont5; filter: drop-shadow(3px 3px 1px rgba(0, 0, 0, 0.3));" type="text" @bind-value="player.Name" placeholder="Enter name...." />
-                    </div>
-                    <button @onclick="x => RemovePlayer(player)" class="btn btn-outline-warning fw-bolder" style="margin: auto;position: absolute;left: 50%;bottom:20px; -ms-transform: translate(-50%,-30%); transform: translate(-50%,-30%);">Kick</button>
                 </div>
-            </div>
-}
+            }
 
             <div id="@(sessionGameMetaData!.Session!.players.Count)player" class="col playerSheet">
                 <button @onclick="AddPlayer" class="btn btn-dark" style="margin: auto;position: absolute;top: 50%;left:50%; -ms-transform: translate(-50%,-50%); transform: translate(-50%,-50%);">Add player</button>
@@ -52,4 +98,5 @@
             <div onclick="ScrollNextCardHolderOnClick()" class="CaroselButton right"><i class="arrow"></i></div>
         </div>
     </div>
+
 </div>
