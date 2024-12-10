@@ -40,11 +40,11 @@
         </div>
     </div>
 
-    <div style="margin:auto; width:100%;">
+    <div style="width:100vw; position:fixed; left:0px">
         <div id="cardHolderScroller" class="playerCardHolder" onscroll="ChangeVisibilityOfCarosel()">
             @foreach (var (player, i) in sessionGameMetaData!.Session!.players.Select((value, i) => (value, i)))
             {
-                <div id="@(i)player" class="col playerSheet">
+                <div id="@(i)player" class="col-1 playerSheet">
                     <div class="pin" style="filter: hue-rotate(@(player.color)deg);">
                         <img style="width:100%" src="/images/pin.png" />
                     </div>
@@ -61,8 +61,8 @@
                             @if (!string.IsNullOrEmpty(player.image))
                             {
                                 @* Player image *@
-                                <div style="position:absolute; width:90%; height:90%; top:2%; left:5%;">
-                                   <div style="background-color:lavender;filter: url(#wavy@((player.PlayerId+5) % 3 + 1)) drop-shadow(2px 4px 1px rgba(0, 0, 0, 0.1));"></div>
+                                <div style="position:absolute; width:90%; height:90%; top:2%; left:5%; overflow:hidden;filter:drop-shadow(2px 4px 6px black);">
+                                   @* <div style="background-color:lavender;filter: url(#wavy@((player.PlayerId+5) % 3 + 1)) drop-shadow(2px 4px 1px rgba(0, 0, 0, 0.1));"></div> *@
                                    <img class="w-100" style="box-shadow:2px 2px 2px rgba(0,0,0,0.2);" src="data:image;base64, @player.image"/>
                                 </div>
                             }
@@ -89,7 +89,7 @@
                 </div>
             }
 
-            <div id="@(sessionGameMetaData!.Session!.players.Count)player" class="col playerSheet">
+            <div id="@(sessionGameMetaData!.Session!.players.Count)player" class="col-1 playerSheet">
                 <button @onclick="AddPlayer" class="btn btn-dark" style="margin: auto;position: absolute;top: 50%;left:50%; -ms-transform: translate(-50%,-50%); transform: translate(-50%,-50%);">Add player</button>
             </div>
         </div>
