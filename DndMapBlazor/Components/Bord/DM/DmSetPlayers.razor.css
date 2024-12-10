@@ -30,13 +30,14 @@
 
 
 
-@keyframes PaperFallAnim {
+
+@keyframes BurnCard {
     0% {
-       transform:translateY(-600px);
+        height: 100%;
     }
 
     100% {
-        transform: translateY(0);
+        height: 0%;
     }
 }
 
@@ -45,22 +46,40 @@
     scroll-snap-align: start;
     filter: drop-shadow(5px 5px 5px #000000);
     /*    line-height: 1.2rem;*/
-    min-width:370px;
+    min-width: 370px;
+    /*animation: BurnCard 3s ease-in 1;*/
+    animation-name:BurnCard;
+    animation-duration:3s;
+    animation-play-state:running;
+    animation-timing-function:ease-in;
+    animation-iteration-count:infinite;
+    overflow:hidden;
+    display:grid;
 }
 
+
+@keyframes PaperFallAnim {
+    0% {
+        transform: translateY(-600px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
 .PlayerSheetPaper {
     animation-name: PaperFallAnim;
     animation-duration: 1.5s;
     animation-play-state: running;
     animation-timing-function: ease-out;
-    height: 100%;
-    padding: 50px 10px;
+    height: 100%;    
     max-width: 400px;
     min-width: 300px;
     position: relative;
     /*    background-color: var(--col5);
     clip-path: polygon( 1% 2%, 3.5% 0.1%, 8.9% 2.7%, 16.2% 1.2%, 19.7% 0.8%, 24.7% 2%, 31.2% 0%, 35.9% 2.3%, 40.6% 0.5%, 47.1% 1.8%, 49.9% 1%, 53.8% 2.5%, 62.2% 0.4%, 67.3% 1.2%, 70.3% 0.3%, 75.8% 1.4%, 78.5% 1.7%, 84% 2.6%, 91.1% 0.5%, 93.6% 2.4%, 97.3% 0.3%, 98.9% 6%, 98.1% 11.4%, 98.6% 15.5%, 97.3% 17.8%, 97.7% 27.4%, 98.3% 28.5%, 99.7% 34.1%, 98.8% 41.9%, 98.3% 45.7%, 98.4% 50.9%, 98.7% 57.4%, 99.6% 60.4%, 99.4% 66.6%, 99.2% 69.5%, 97.4% 77.1%, 98.1% 82.3%, 99.9% 83.5%, 98.2% 91.5%, 99.3% 95.3%, 98% 98.6%, 93.6% 97.4%, 90.3% 98.3%, 86.8% 98.3%, 78.6% 98.5%, 76.4% 99.2%, 69.7% 99.8%, 64.2% 99.3%, 61.8% 99.2%, 57.2% 98.1%, 48.7% 98.3%, 46.8% 99%, 39.6% 98.9%, 33.8% 97.3%, 28.2% 99.4%, 27% 98.3%, 22.1% 98.6%, 13.1% 97.1%, 8.7% 99.3%, 2.7% 97.4%, 2% 98.2%, 2.1% 94.3%, 0.7% 90.5%, 0.9% 86.3%, 2.2% 78.2%, 0.4% 76.7%, 1.2% 72.1%, 2% 64%, 1.4% 59.8%, 0.4% 57.3%, 0.3% 49.1%, 2.9% 44.7%, 1.9% 41.3%, 0.8% 35.7%, 2.9% 31.3%, 0.8% 24.9%, 2.7% 20.5%, 0.8% 17.4%, 2.5% 8.6%, 1.1% 5.5% );}
     */
+    transition: height 2s ease-in, padding 2s ease-in;
 }
 
 .BurntCorners {
@@ -246,7 +265,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
+        height: 580px;
         opacity:50%;
         background: conic-gradient(#fff3, #fff0 2% 24%, #fff2 25%, #4321 0, #0000 27% 48%, #9632 50%, #fff2 0, #fff0 52% 73%, #9632 75%, #fff3 0, #fff0 78% 97%, #9632);
     }
@@ -280,3 +299,63 @@
 .body {
     background-image: none !important;
 }
+
+
+/*Fire*/
+.fire::before,
+.fire::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+/*https://assets.codepen.io/13471/silver-glitter-background.png*/
+
+.fire::before {
+    content: "";
+    background-image: url("https://assets.codepen.io/13471/silver-glitter-background.png"), url("https://assets.codepen.io/13471/silver-glitter-background.png"), linear-gradient( 0deg, white 0px, #ff8951 5px, #dcbc169c 30%, transparent 70% ), radial-gradient(ellipse at bottom, transparent 30%, black 60%);
+    background-size: 350px 500px, 400px 650px, 100% 100%, 100% 100%;
+    background-blend-mode: hard-light, color-dodge, multiply;
+    background-position: 0px 0px, 0px 0px, var(--gradientPos);
+    background-repeat: repeat, repeat, repeat, no-repeat;
+    mix-blend-mode: color-dodge;
+    filter: brightness(3.7) blur(7px) contrast(6);
+    animation: fire 1.75s linear infinite;
+    box-shadow: inset 0 -40px 50px -60px #63bbc5;
+}
+
+@keyframes fire {
+    0% {
+        background-position: center 0px, center 0px, 50% 100%, center center;
+    }
+
+    100% {
+        background-position: center -500px, center -650px, 50% 100%, center center;
+    }
+}
+
+.fire {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+@keyframes fireMove {
+    0% {
+        height:0px
+    }
+
+    100% {
+        height: 100px;
+    }
+}
+
+.FireHolder {
+    position:absolute;
+    bottom:0px;
+    animation: fireMove 0.2s ease-in 1;
+    animation-fill-mode:forwards;
+    width:100%;
+    height:100%;    
+}
+

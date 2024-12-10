@@ -16,6 +16,8 @@ namespace DndMapBlazor.Components.Bord.DM
         [Parameter]
         public EventCallback<bool> SessionUpdatedCallBack { get; set; }
 
+        private List<int> KickedPlayers { get; set; } = new List<int>();
+
 
         private void AddPlayer()
         {
@@ -24,7 +26,17 @@ namespace DndMapBlazor.Components.Bord.DM
 
         private void RemovePlayer(Models.SessionEntites.Player pl)
         {
-            sessionGameMetaData!.Session!.players.Remove(pl);
+            if (!KickedPlayers.Contains(pl.PlayerId))
+            {
+                KickedPlayers.Add(pl.PlayerId);
+                Task.Run(async () =>
+                {
+                    await Task.Delay(2000);
+                    sessionGameMetaData!.Session!.players.Remove(pl);
+                    KickedPlayers.Remove(pl.PlayerId);
+                    StateHasChanged();
+                });
+            }
         }
 
         private async void AddPlayerImage(InputFileChangeEventArgs e, Models.SessionEntites.Player pl)
