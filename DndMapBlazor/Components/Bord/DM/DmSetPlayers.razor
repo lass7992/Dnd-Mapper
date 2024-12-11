@@ -49,7 +49,7 @@
                         <img style="width:100%" src="/images/pin.png" />
                     </div>
 
-                    <div class="PlayerSheetPaper" style="@(KickedPlayers.Contains(i) ? "height:0; padding-top:0; padding-bottom:0;" : "")">
+                    <div class="PlayerSheetPaper" style="@(KickedPlayers.Contains(player.PlayerId) ? "height:0; padding-top:0; padding-bottom:0; transition: height 1s ease-in, padding 1s ease-in;" : "")">
                         <div style="width:100%;height:100%; overflow:hidden; padding: 50px 10px;">
                             <div class="parchment" style="  filter: url(#wavy@(player.PlayerId % 3 + 1));">
                                 <div class="BurntCorners"></div>
@@ -87,7 +87,7 @@
                             <div style="text-align:center;margin-top:10px;">
                                 <button @onclick="x => RemovePlayer(player)" class="btn btn-outline-warning fw-bolder" style="margin: auto; background-color:rgba(50,100,100,0.2)">Kick</button>
                             </div>
-                            @if (KickedPlayers.Contains(i))
+                            @if (KickedPlayers.Contains(player.PlayerId))
                             {
                                 <div class="FireHolder">
                                     <div class="fire"></div>

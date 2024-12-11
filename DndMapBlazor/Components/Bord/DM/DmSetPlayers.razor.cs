@@ -29,9 +29,10 @@ namespace DndMapBlazor.Components.Bord.DM
             if (!KickedPlayers.Contains(pl.PlayerId))
             {
                 KickedPlayers.Add(pl.PlayerId);
+                StateHasChanged();
                 Task.Run(async () =>
                 {
-                    await Task.Delay(2000);
+                    await Task.Delay(1000);
                     sessionGameMetaData!.Session!.players.Remove(pl);
                     KickedPlayers.Remove(pl.PlayerId);
                     StateHasChanged();
