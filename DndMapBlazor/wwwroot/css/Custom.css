@@ -3,8 +3,9 @@ z-index:10
 }
 
 body {
-    background-color: whitesmoke !important;
-    background-image: url(/images/paper2.png) !important;
+/*    background-color: whitesmoke !important;
+    background-image: url(/images/paper2.png) !important;*/
+    background-color:black;
     background-size: 800px !important;
     background-repeat: repeat;
     background-position: center;

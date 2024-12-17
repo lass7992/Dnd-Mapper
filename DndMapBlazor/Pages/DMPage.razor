@@ -2,8 +2,12 @@
 @using DndMapBlazor.Components.Bord
 @using DndMapBlazor.Components.Bord.DM
 
-<div style="width:100%">
-    <link rel="stylesheet" href="css/WoodPanels.css" />
+<div style="width:100%;">
+    <div style="background-image: url('/images/TavernBG.gif'); -webkit-background-size: 100% !important; background-size: 100% !important; position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-2;filter: blur(5px);"></div>
+    @*     <div style="background-image: url('/images/WoodPlanks2.jpg'); -webkit-background-size: 100% !important; background-size: 100% !important; position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-2;filter: hue-rotate(346deg) brightness(1.3) contrast(1.1) saturate(0.5);background-position-x: -600px;"></div> *@
+
+
+@*     <link rel="stylesheet" href="css/WoodPanels2.css" /> *@
 
     @if (SessionGameMetaData!.Session!.state == Models.SessionEntites.SessionState.setWorld)
     {

@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div style="width:100vw; position:fixed; left:0px">
+    <div style="width:100vw; position:fixed; left:0px;">
         <div id="cardHolderScroller" class="playerCardHolder" onscroll="ChangeVisibilityOfCarosel()">
             @foreach (var (player, i) in sessionGameMetaData!.Session!.players.Select((value, i) => (value, i)))
             {
@@ -107,5 +107,4 @@
             <div onclick="ScrollNextCardHolderOnClick()" class="CaroselButton right"><i class="arrow"></i></div>
         </div>
     </div>
-
 </div>

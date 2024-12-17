@@ -1,4 +1,17 @@
-﻿a {
+﻿body::after {
+    content: "";
+    background-color: black;
+    z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+
+
+a {
     padding:0px
 }
 
@@ -41,4 +54,19 @@ button {
 .buttonRow {
     width: 200px;
     margin: 1px auto;
+}
+
+
+.Background {
+    width: 106%;
+    height: 106%;
+    background-image: url("/images/TavernBG.gif");
+    background-repeat: repeat;
+    background-size: contain;
+    background-position: center;
+    background-color: currentcolor;
+    z-index: -2;
+    filter:blur(10px);
+    margin-top:2%;
+    margin-left:-3%
 }

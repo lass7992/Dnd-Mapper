@@ -23,3 +23,14 @@ function ChangeVisibilityOfCarosel()
         CaroselButtonHolder.style.setProperty('visibility', 'hidden');
     }
 }
+
+function Transition() {
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'none';
+
+    setTimeout(
+        function () {
+            document.body.style.transition = 'opacity 2s';
+            document.body.style.opacity = '1';
+        }, 10);
+}
