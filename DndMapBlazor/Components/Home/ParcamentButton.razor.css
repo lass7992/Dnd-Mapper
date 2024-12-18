@@ -1,0 +1,47 @@
+﻿/*ParcamentButtons*/
+.ParcamentStart {
+    background-image: url("/images/Home/ParcamentBegining.png");
+    height: 100%;
+    width: 5.4%;
+    background-size: auto 100%;
+    background-repeat: no-repeat
+}
+
+
+@keyframes scrollOut {
+    from {
+        width: 0px;
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+.ParcamentMiddle {
+    background-image: url("/images/Home/ParcamentMiddle.png");
+    height: 100%;
+    background-size: auto 100%;
+    background-attachment: local;
+    background-repeat: repeat-x;
+    padding: 0;
+    animation-name: scrollOut;
+    animation-duration: 2s;
+    animation-play-state: running;
+    animation-timing-function: ease;
+    animation-fill-mode: forwards;
+    position: relative;
+    overflow: hidden
+}
+
+.ParcamentEnd {
+    background-image: url("/images/Home/ParcamentEnd.png");
+    height: 100%;
+    width: 6%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin-left: -10px;
+    z-index: 3;
+    filter: drop-shadow(-1px 2px 4px black);
+
+}

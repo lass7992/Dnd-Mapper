@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using DndMapBlazor.Components.Home
 
 <PageTitle>Home</PageTitle>
 
@@ -11,26 +12,43 @@
     </div>
     <div class="row buttonRow" style="">
         <a href="DMPage">        
-            <button>Start campagne</button>
+            <ParcamentButton>
+                <ContentBody>
+                    <Span>Start campagne</Span>
+                </ContentBody>
+            </ParcamentButton>
         </a>
     </div>
 
-    <div class="row buttonRow">
-        <button disabled="true">Continue campagne</button>
+    <div class="row buttonRow" style="100px; filter:saturate(0);">
+        <ParcamentButton Reverse="true">
+            <ContentBody>
+                <Span>Continue campagne</Span>
+            </ContentBody>
+        </ParcamentButton>
     </div>
 
     <div class="row buttonRow">
         <a href="WorldBuilder">
-            <button>Create world</button>
+            <ParcamentButton Reverse="false">
+                <ContentBody>
+                    <Span>Create world</Span>
+                </ContentBody>
+            </ParcamentButton>
         </a>
     </div>
 
 
     <div class="row buttonRow">
         <a href="CamaraTestPage">
-            <button>CamaraTester</button>
+            <ParcamentButton Reverse="true">
+                <ContentBody>
+                    <Span>CamaraTester</Span>
+                </ContentBody>
+            </ParcamentButton>
         </a>
     </div>
+
 </div>
 
 

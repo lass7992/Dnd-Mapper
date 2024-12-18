@@ -23,13 +23,27 @@ h1 {
     font-size:xx-large;
 }
 
+@keyframes rotate {
+    from {
+        transform: rotate(-5deg);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: rotate(5deg);
+        opacity: 0.8;
+    }
+}
+
 .loader {
     width: 64px;
     height: 64px;
     display: block;
     border: 1px solid #FFF;
     border-radius: 50px;
-    position: relative;
+    position: fixed;
+    left:50%;
+    top:50%;
     box-shadow: 0px 0px #FF3D00 inset;
     background-color: #fff;
     background-image: linear-gradient(#FF3D00 100px, transparent 0);
@@ -37,17 +51,14 @@ h1 {
     background-size: 100% auto;
     background-repeat: no-repeat;
     box-sizing: border-box;
-    animation: infinite rotate 2sec alternate;
+    animation-name:rotate;
+    animation-iteration-count:infinite;
+    animation-duration:1s;
+    animation-play-state:running;
+    animation-direction:alternate;
+    animation-timing-function:ease-in-out;
 }
-@keyframes rotate {
-    from {
-        transform: rotate(0);
-    }
 
-    to {
-        transform: rotate(360);
-    }
-}
 
     .loader::after {
         content: '';

@@ -1,0 +1,17 @@
+﻿<div style="height:100%;display:flex;@(Reverse ? "justify-content: flex-end;" : "")">
+    <div class="ParcamentStart"></div>
+    <div class="ParcamentMiddle">
+        <div style="position:absolute;top:50%;left:0px;text-align:center; transform: translate(0%, -50%); width:300px; height:fit-content">
+            @ContentBody
+        </div>
+    </div>
+    <div class="ParcamentEnd"></div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ContentBody { get; set; }
+
+    [Parameter]
+    public bool Reverse { get; set; }
+}
