@@ -11,7 +11,8 @@
 @inject HttpClient Http
 
 <PageTitle>World Builder</PageTitle>
-<div style="width:80%; margin:auto">
+<div style="width:80%; margin:auto; ">
+    <div style="background:white; position:fixed; top:0px; left:0px; width:100vW; height:100vh; "></div>
     @* Menu selector *@
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark" style="padding-left:10px; border-radius: 10px 10px 0px 0px">
         <a class="navbar-brand" @onclick="x => {selectedField = null; selectedWorld = topWorld; currentMenuItem = WorldBuilderMenuItems.None;}">Top</a>

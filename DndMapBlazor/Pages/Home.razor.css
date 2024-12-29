@@ -68,7 +68,7 @@ button {
     background-color: currentcolor;
     z-index: -2;
     filter:blur(10px);
-    margin-top:2%;
+    margin-top:0;
     margin-left:-3%
 }
 
